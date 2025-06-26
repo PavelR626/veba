@@ -659,6 +659,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests
 * [2025.5.29] - Updated `GTDB-Tk` version `VEBA-classify-prokaryotic_env` to `GTDB-Tk==2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [Issue #177](https://github.com/jolespin/veba/issues/177)
 * [2025.5.26] - Fixed bug in rare case of missing UniRef fields [Issue #181](https://github.com/jolespin/veba/issues/181)
 * [2025.4.25] - Fixed bug in rare case of a contig/scaffold identifier being assigned to more than 1 bin within `get_partition_organelle_sequences_multiple_cmd` command in `eukaryotic_gene_modeling_wrapper.py` used by the `binning-eukaryotic.py` because of overlapping naming scheme [Issue #175](https://github.com/jolespin/veba/issues/175)
