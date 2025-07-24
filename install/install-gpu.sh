@@ -48,7 +48,7 @@ cp -r ${VEBA_REPOSITORY_DIRECTORY}/bin/VEBA_SCRIPT_VERSIONS ${CONDA_ENVS_PATH}/$
 
 # Module environments
 # CPU
-GPU_MODULES="VEBA-binning-prokaryotic|VEBA-binning-viral"
+GPU_MODULES="VEBA-binning-prokaryotic|VEBA-binning-viral|VEBA-classify-viral"
 for ENV_YAML in $(ls ${VEBA_REPOSITORY_DIRECTORY}/install/environments/VEBA*.yml | grep -E -v "${GPU_MODULES}"); do
     # Get environment name
     ENV_NAME=$(basename $ENV_YAML .yml)
