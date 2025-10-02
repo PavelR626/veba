@@ -11,7 +11,7 @@ mkdir -p ${output_directory}/
 mkdir -p logs/
 
 # Iterate through all samples in the identifier list
-rm -f ${command_list}
+rm -f ${commands_file}
 
 for id in $(cat ../../identifiers.list);
 do
@@ -21,6 +21,6 @@ do
         r2="../../Analysis/veba_output/preprocess/${id}/output/trimmed_2.fastq.gz"
 	params="-1 ${r1} -2 ${r2} -n ${id} -o ${output_directory} -p=${n_threads_per_job} --program megahit --megahit_preset meta-large"
         cmd="/usr/bin/time -v veba --module assembly --params='${params}'"
-        echo "${cmd} 2> logs/${job_name}.e 1> logs/${job_name}.o" >> ${command_list}
+        echo "${cmd} 2> logs/${job_name}.e 1> logs/${job_name}.o" >> ${commands_file}
 
 done
