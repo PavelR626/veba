@@ -14,7 +14,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.11.7"
+__version__ = "2025.9.29"
 
 # Assembly
 def get_concatenate_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
