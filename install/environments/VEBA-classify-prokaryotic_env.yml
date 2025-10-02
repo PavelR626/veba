@@ -1,4 +1,4 @@
-name: VEBA-classify-prokaryotic_env__v2025.1.23
+name: VEBA-classify-prokaryotic_env__v2025.10.2
 channels:
   - conda-forge
   - bioconda
@@ -26,7 +26,7 @@ dependencies:
   - fasttree=2.1.11=h031d066_3
   - genopype=2023.5.15=py_0
   - gsl=2.7=he838d99_0
-  - gtdbtk=2.4.0=pyhdfd78af_1
+  - gtdbtk=2.4.1=pyhdfd78af_1
   - hmmer=3.4=hdbdd923_1
   - icu=64.2=he1b5a44_1
   - idna=3.7=pyhd8ed1ab_0
@@ -90,6 +90,6 @@ dependencies:
   - zlib=1.2.13=h4ab18f5_6
   - zstd=1.5.6=ha6fb4c9_0
   - pip:
-      - memory-profiler==0.61.0
-      - psutil==6.1.1
-      - pyexeggutor==2025.1.23.post2
+    - memory-profiler==0.61.0
+    - psutil==6.1.1
+    - pyexeggutor==2025.1.23.post2
