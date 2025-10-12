@@ -74,19 +74,27 @@ def main(args=None):
         if opts.axis == 0:
             if not opts.allow_missing_index:
                 assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.loc[index]
         if opts.axis == 1:
             if not opts.allow_missing_index:
                 assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.loc[:,index]
     else:
         if opts.axis == 0:
             if not opts.allow_missing_index:
                 assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.drop(index, axis=0)
         if opts.axis == 1:
             if not opts.allow_missing_index:
                 assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.drop(index, axis=1)
 
     # Write table
