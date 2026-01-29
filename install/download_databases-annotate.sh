@@ -123,7 +123,7 @@ rm -rf ${DATABASE_DIRECTORY}/VFDB_setA_pro.fas.gz
 
 # CAZy
 mkdir -v -p ${DATABASE_DIRECTORY}/Annotate/CAZy
-wget -v -P ${DATABASE_DIRECTORY} https://bcb.unl.edu/dbCAN2/download/CAZyDB.07262023.fa
+wget -v -P ${DATABASE_DIRECTORY} http://dbcan-hcc.unl.edu/download/CAZyDB.07262023.fa 
 diamond makedb --in ${DATABASE_DIRECTORY}/CAZyDB.07262023.fa --db ${DATABASE_DIRECTORY}/Annotate/CAZy/CAZyDB.07262023.dmnd --threads ${N_JOBS}
 rm -rf ${DATABASE_DIRECTORY}/CAZyDB.07262023.fa
 
