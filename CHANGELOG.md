@@ -13,6 +13,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - TBD
+* Simplified annotation module (Remove UniRef and add PGAP)
+* Wrapper around Leviathan
+* Wrapper around Pangenomium
+* Change BUSCO to Compleasm
+* Remove MetaCoAG support
+* Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules) [v2.6.0] 
+* Update `eukaryota_odb10` -> `eukaryota_odb12` in `Markers` database
+
+
+## [2.5.2] - TBD
+* Ensure all environments work without Nvidia
+* Update Binette
+* Remove featureCounts from binning
+* Update KEGG pathway profiler so steps are produced
+* Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
+* Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
+* Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
+
+* [2025.9.18] - Added `reformat_compleasm_results.py`
+* [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests
+* [2025.5.29] - Updated `GTDB-Tk` version `VEBA-classify-prokaryotic_env` to `GTDB-Tk==2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [Issue #177](https://github.com/jolespin/veba/issues/177)
+* [2025.5.26] - Fixed bug in rare case of missing UniRef fields [Issue #181](https://github.com/jolespin/veba/issues/181)
+* [2025.4.25] - Fixed bug in rare case of a contig/scaffold identifier being assigned to more than 1 bin within `get_partition_organelle_sequences_multiple_cmd` command in `eukaryotic_gene_modeling_wrapper.py` used by the `binning-eukaryotic.py` because of overlapping naming scheme [Issue #175](https://github.com/jolespin/veba/issues/175)
+* [2025.4.24] - Removed extra `;` that was added to GFF by `filter_busco_results.py` when organelles were detected in eukaryotic bins [Issue #173](https://github.com/jolespin/veba/issues/173)
+* [2025.4.14] - Changed `;` instead of `&&` between subcommands in `Binette` stage for `binning-prokaryotic.py` because of [Binette Issue #58](https://github.com/genotoul-bioinfo/Binette/issues/58)
+
+
 ## [2.5.1] - 2025.04.12
 
 ### Added
@@ -626,14 +654,11 @@ ________________________________________________________________
 * Develop method for building and curating HMM cutoffs (e.g., comparing against false positives)
 * Add `frozenset` for proteins that has all of the database identifiers
 * Add `--proteins` option to `classify-eukaryotic.py` which aligns proteins to `MicroEuk100.eukaryota_odb10` via `MMseqs2` and then proceeds with the pipeline.
-* Build SQL databases from all results
 * Remove `p__Arthropoda` from `MicroEuk` database
 * Add number of unique protein clusters to `identifier_mapping.genomes.tsv.gz` in `cluster.py` to assess most metabolicly diverse representative.
 * Add `BiNI` biosynthetic novelty index to `biosynthetic.py`
-* `busco_wrapper.py` that relabels all the genes, runs analysis, then converts output to tsv.
 * Use `pigz` instead of `gzip`
 * Add representative to `identifier_mapping.proteins.tsv.gz`
-* Use `aria2` in parallel instead of `wget`.
 * Add support for `Salmon` in `mapping.py` and `index.py`.  This can be used instead of `STAR` which will require adding the `exon` field to `Pyrodigal` GFF file (`MetaEuk` modified GFF files already have exon ids). 
 
 
