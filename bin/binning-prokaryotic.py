@@ -832,8 +832,8 @@ do
 done
 
 """.format(
-    directories[("intermediate", "{}__barrnap".format(step-3))],
-    directories[("intermediate", "{}__trnascan-se".format(step-2))],
+    directories[("intermediate", "{}__barrnap".format(step-2))],
+    directories[("intermediate", "{}__trnascan-se".format(step-1))],
     os.path.join(output_directory,"genomes"),
     os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "*.fa"),
     os.environ["compile_gff.py"],
@@ -846,7 +846,7 @@ done
 
         "DST={}; for SRC in $(ls {}); do SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST; done".format(
         os.path.join(output_directory,"genomes"),
-        os.path.join(directories[("intermediate", "{}__barrnap".format(step-3))], "*.rRNA"),
+        os.path.join(directories[("intermediate", "{}__barrnap".format(step-2))], "*.rRNA"),
     ),
     ]
 
@@ -857,7 +857,7 @@ done
 
         "DST={}; for SRC in $(ls {}); do SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST; done".format(
         os.path.join(output_directory,"genomes"),
-        os.path.join(directories[("intermediate", "{}__trnascan-se".format(step-2))], "*.tRNA"),
+        os.path.join(directories[("intermediate", "{}__trnascan-se".format(step-1))], "*.tRNA"),
     ),
     ]
 
