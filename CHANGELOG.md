@@ -26,12 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.5.2] - TBD
 * Ensure all environments work without Nvidia
 * Update Binette
-* Remove featureCounts from binning
+* Remove featureCounts from binning (done)
 * Update KEGG pathway profiler so steps are produced
 * Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
 * Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
 * Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
-
+* Fix identifier mapping issue in `binning-prokaryotic.py`
 * [2025.9.18] - Added `reformat_compleasm_results.py`
 * [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests
 * [2025.5.29] - Updated `GTDB-Tk` version `VEBA-classify-prokaryotic_env` to `GTDB-Tk==2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [Issue #177](https://github.com/jolespin/veba/issues/177)
@@ -684,6 +684,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.12] - Remove `featureCounts` from binning modules
 * [2025.9.18] - Added `reformat_compleasm_results.py`
 * [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests
 * [2025.5.29] - Updated `GTDB-Tk` version `VEBA-classify-prokaryotic_env` to `GTDB-Tk==2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [Issue #177](https://github.com/jolespin/veba/issues/177)
