@@ -24,9 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [2.5.2] - TBD
+* [Bug] Identifier mapping in binning-prokaryotic only contains gene and contig not genome [issue/#197](https://github.com/jolespin/veba/issues/197)
 * Ensure all environments work without Nvidia
-* Update Binette
-* Remove featureCounts from binning (done)
+* Update Binette (v1.2.1) and modify outputs
+* ~~Remove featureCounts from binning~~
 * Update KEGG pathway profiler so steps are produced
 * Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
 * Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
@@ -684,6 +685,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.24] - Updated `binette` from `1.1.1` to `1.2.1` which changes behavior of naming, output columns, and bin dereplication which required updating `binning-prokaryotic.py` and `filter_binette_results.tsv`.  Now `final_bins_quality_reports.tsv` is not changed to `quality_reports.tsv`.
 * [2026.3.12] - Remove `featureCounts` from binning modules
 * [2025.9.18] - Added `reformat_compleasm_results.py`
 * [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests

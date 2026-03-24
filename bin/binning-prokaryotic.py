@@ -514,12 +514,12 @@ done
         ">",
         output_filepaths[-1],
         
-        # Cleanup
-            "&&",
+        # # Cleanup
+        #     "&&",
 
-        "mv",
-        os.path.join(output_directory, "final_bins_quality_reports.tsv"),
-        os.path.join(output_directory, "quality_reports.tsv"),
+        # "mv",
+        # os.path.join(output_directory, "final_bins_quality_reports.tsv"),
+        # os.path.join(output_directory, "quality_reports.tsv"),
         
             "&&",
         
@@ -604,7 +604,7 @@ def get_domain_predictions_cmd(input_filepaths, output_filepaths, output_directo
         " ".join(input_filepaths),
         "|",
         "cut",
-        "-f1,10",
+        "-f1,14",   # <-- was -f1,10
         "|",
         "tail",
         "-n +2",
