@@ -809,6 +809,16 @@ S2B=$(ls {}) || (echo 'No genomes have been detected' && exit 1)
     ),
     ]
 
+    # Concatenate identifier_mapping.tsv across iterations (symlink loop overwrites with last iteration)
+    cmd += [
+            "&&",
+
+        "cat",
+        os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "identifier_mapping.tsv"),
+        ">",
+        os.path.join(output_directory, "genomes", "identifier_mapping.tsv"),
+    ]
+
     # GFF
     cmd += [ 
 """
