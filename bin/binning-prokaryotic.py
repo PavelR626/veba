@@ -13,7 +13,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2026.3.12"
+__version__ = "2026.3.26"
 
 # Assembly
 def get_coverage_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -809,13 +809,20 @@ S2B=$(ls {}) || (echo 'No genomes have been detected' && exit 1)
     ),
     ]
 
-    # Concatenate identifier_mapping.tsv across iterations (symlink loop overwrites with last iteration)
+    # Concatenate identifier_mapping.tsv across iterations
+    # Write to tmp first to avoid self-clobbering through the symlink created above
     cmd += [
             "&&",
 
         "cat",
         os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "identifier_mapping.tsv"),
         ">",
+        os.path.join(directories["tmp"], "identifier_mapping.tsv"),
+
+            "&&",
+
+        "mv",
+        os.path.join(directories["tmp"], "identifier_mapping.tsv"),
         os.path.join(output_directory, "genomes", "identifier_mapping.tsv"),
     ]
 
