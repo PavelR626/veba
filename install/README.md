@@ -11,6 +11,9 @@ Each major version will be packaged as a [release](https://github.com/jolespin/v
 
 ____________________________________________________________
 
+> [!NOTE]
+> I currently don't have access to Nvidia GPUs so I can't build the GPU-accelerated environments.  If you want to build them yourself, you can update the relevant environments (`VEBA-binning-prokaryotic_env`, `VEBA-binning-viral_env`, and `VEBA-classify-viral_env` with Nvidia supported builds for `SemiBin2`, `Metadecoder`, and `geNomad`).
+
 ### VEBA Database: 
 
 #### Compatibility Table
