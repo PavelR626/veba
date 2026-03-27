@@ -686,6 +686,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
 * [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.
 * [2026.3.25] - Fixed bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was being stored in `output/`
 * [2026.3.24] - Updated `binette` from `1.1.1` to `1.2.1` which changes behavior of naming, output columns, and bin dereplication which required updating `binning-prokaryotic.py` and `filter_binette_results.tsv`.  Now `final_bins_quality_reports.tsv` is not changed to `quality_reports.tsv`.
