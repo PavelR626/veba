@@ -30,8 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
 * Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
 * Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
+* Update `antiSMASH` version from `7.x` to `8.x`
+* [Bug] Additional options (e.g., --assembler_options='--continue') are not interpreted correctly using new syntax
 
 ### Done
+
+* [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
+* [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.
+* [2026.3.25] - Fixed bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was being stored in `output/`
 * [2026.3.24] - Updated `binette` from `1.1.1` to `1.2.1` which changes behavior of naming, output columns, and bin dereplication which required updating `binning-prokaryotic.py` and `filter_binette_results.tsv`.  Now `final_bins_quality_reports.tsv` is not changed to `quality_reports.tsv`.
 * [2026.3.12] - Remove `featureCounts` from binning modules
 * [2025.9.18] - Added `reformat_compleasm_results.py`

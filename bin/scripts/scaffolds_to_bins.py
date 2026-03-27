@@ -71,7 +71,7 @@ def main(args=None):
                         scaffold_to_bin[id_scaffold] = id_bin 
                 else:
                     if line.startswith(">"):
-                        id_scaffold = line.strip()[1:].split(" ")[0]
+                        id_scaffold = line.strip()[1:].split(" ", maxsplit=1)[0]
                         scaffold_to_bin[id_scaffold] = id_bin 
             f.close()
 
@@ -115,11 +115,11 @@ def main(args=None):
                 for line in tqdm(f, filepath):
                     if opts.header:
                         if line.startswith(">"):
-                            id_scaffold = line.strip()[1:]
+                            id_scaffold = line.strip()[1:].split(" ", maxsplit=1)[0]
                             scaffold_to_bin[id_scaffold] = id_bin 
                     else:
                         if line.startswith(">"):
-                            id_scaffold = line.strip()[1:].split(" ")[0]
+                            id_scaffold = line.strip()[1:].split(" ", maxsplit=1)[0]
                             scaffold_to_bin[id_scaffold] = id_bin 
                 f.close()
         
