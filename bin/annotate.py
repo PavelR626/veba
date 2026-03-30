@@ -919,6 +919,14 @@ def main(args=None):
         assert "VEBA_DATABASE" in os.environ, "Please set the following environment variable 'export VEBA_DATABASE=/path/to/veba_database' or provide path to --veba_database"
         opts.veba_database = os.environ["VEBA_DATABASE"]
 
+    # UniRef check
+    if opts.uniref == "uniref90":
+        uniref90_path = os.path.join(opts.veba_database, "Annotate", "UniRef", "uniref90.dmnd")
+        if not os.path.exists(uniref90_path):
+            print(f"Either use `--uniref uniref50` or build `uniref90` database at {uniref90_path}")
+            sys.exit(1)
+
+
     # Directories
     directories = dict()
     directories["project"] = create_directory(opts.output_directory)

@@ -90,10 +90,11 @@ echo " * Processing UniRef diamond database"
 echo ". .. ... ..... ........ ............."
 mkdir -v -p ${DATABASE_DIRECTORY}/Annotate/UniRef
 
-wget -v -P ${DATABASE_DIRECTORY}/Annotate/UniRef/ https://ftp.uniprot.org/pub/databases/uniprot/current_release/uniref/uniref90/uniref90.release_note
-wget -v -P ${DATABASE_DIRECTORY} https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref90/uniref90.fasta.gz
-diamond makedb --in ${DATABASE_DIRECTORY}/uniref90.fasta.gz --db ${DATABASE_DIRECTORY}/Annotate/UniRef/uniref90.dmnd --threads ${N_JOBS}
-rm -rf ${DATABASE_DIRECTORY}/uniref90.fasta.gz
+## Uncomment if you want UniRef90
+# wget -v -P ${DATABASE_DIRECTORY}/Annotate/UniRef/ https://ftp.uniprot.org/pub/databases/uniprot/current_release/uniref/uniref90/uniref90.release_note
+# wget -v -P ${DATABASE_DIRECTORY} https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref90/uniref90.fasta.gz
+# diamond makedb --in ${DATABASE_DIRECTORY}/uniref90.fasta.gz --db ${DATABASE_DIRECTORY}/Annotate/UniRef/uniref90.dmnd --threads ${N_JOBS}
+# rm -rf ${DATABASE_DIRECTORY}/uniref90.fasta.gz
 
 wget -v -P ${DATABASE_DIRECTORY}/Annotate/UniRef/ https://ftp.uniprot.org/pub/databases/uniprot/current_release/uniref/uniref50/uniref50.release_note
 wget -v -P ${DATABASE_DIRECTORY} https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref50/uniref50.fasta.gz

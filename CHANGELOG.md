@@ -691,6 +691,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 * [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
 * [2026.3.30] - Updated `geNomad` version `1.11` to `1.12`
 * [2026.3.30] - `VEBA-DB_v9.2` contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
