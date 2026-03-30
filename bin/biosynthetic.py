@@ -13,7 +13,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2025.4.7"
+__version__ = "2026.3.30"
 
 # antiSMASH
 def get_antismash_from_genomes_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -741,7 +741,7 @@ def create_pipeline(opts, directories, f_cmds):
     # i/o
     input_filepaths = [
          directories[("intermediate",  "1__antismash")], 
-         os.path.join(opts.veba_database, "Annotate", "MIBiG", "mibig_v3.1.dmnd"),
+         os.path.join(opts.veba_database, "Annotate", "MIBiG", "mibig_v4.0.dmnd"),
          os.path.join(opts.veba_database, "Annotate", "VFDB", "VFDB_setA_pro.dmnd"),
         ]
     output_filenames = ["homology.tsv.gz"]

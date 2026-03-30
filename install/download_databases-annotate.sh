@@ -1,5 +1,5 @@
 #!/bin/bash
-# __version__ = "2025.4.3"
+# __version__ = "2026.3.30"
 # VEBA_DATABASE_VERSION = "VEBA-DB_v9"
 # MICROEUKAYROTIC_DATABASE_VERSION = "MicroEuk_v3"
 # usage: bash veba/download_databases-annotate.sh /path/to/veba_database_destination/
@@ -102,11 +102,11 @@ rm -rf ${DATABASE_DIRECTORY}/uniref50.fasta.gz
 
 #MiBIG
 mkdir -v -p ${DATABASE_DIRECTORY}/Annotate/MIBiG
-wget -v -P ${DATABASE_DIRECTORY} https://dl.secondarymetabolites.org/mibig/mibig_prot_seqs_3.1.fasta
-seqkit rmdup -s ${DATABASE_DIRECTORY}/mibig_prot_seqs_3.1.fasta > ${DATABASE_DIRECTORY}/mibig_prot_seqs_3.1.rmdup.fasta
-diamond makedb --in ${DATABASE_DIRECTORY}/mibig_prot_seqs_3.1.rmdup.fasta --db ${DATABASE_DIRECTORY}/Annotate/MIBiG/mibig_v3.1.dmnd --threads ${N_JOBS}
-rm -rf ${DATABASE_DIRECTORY}/mibig_prot_seqs_3.1.fasta
-rm -rf ${DATABASE_DIRECTORY}/mibig_prot_seqs_3.1.rmdup.fasta
+wget -v -P ${DATABASE_DIRECTORY} https://dl.secondarymetabolites.org/mibig/mibig_prot_seqs_4.0.fasta
+seqkit rmdup -s ${DATABASE_DIRECTORY}/mibig_prot_seqs_4.0.fasta > ${DATABASE_DIRECTORY}/mibig_prot_seqs_4.0.rmdup.fasta
+diamond makedb --in ${DATABASE_DIRECTORY}/mibig_prot_seqs_4.0.rmdup.fasta --db ${DATABASE_DIRECTORY}/Annotate/MIBiG/mibig_v4.0.dmnd --threads ${N_JOBS}
+rm -rf ${DATABASE_DIRECTORY}/mibig_prot_seqs_4.0.fasta
+rm -rf ${DATABASE_DIRECTORY}/mibig_prot_seqs_4.0.rmdup.fasta
 
 # #BiG-SLiCE
 # mkdir -v -p ${DATABASE_DIRECTORY}/Annotate/BiG-SLiCE
@@ -123,12 +123,15 @@ rm -rf ${DATABASE_DIRECTORY}/VFDB_setA_pro.fas.gz
 
 # CAZy
 mkdir -v -p ${DATABASE_DIRECTORY}/Annotate/CAZy
-wget -v -P ${DATABASE_DIRECTORY} http://dbcan-hcc.unl.edu/download/CAZyDB.07262023.fa 
-diamond makedb --in ${DATABASE_DIRECTORY}/CAZyDB.07262023.fa --db ${DATABASE_DIRECTORY}/Annotate/CAZy/CAZyDB.07262023.dmnd --threads ${N_JOBS}
-rm -rf ${DATABASE_DIRECTORY}/CAZyDB.07262023.fa
+# This is down as of 2026.3.30
+# wget -v -P ${DATABASE_DIRECTORY} http://dbcan-hcc.unl.edu/download/CAZyDB.07262023.fa 
+wget -v -O "${DATABASE_DIRECTORY}/CAZyDB.07242025.fa" "https://pro.unl.edu/dbCAN2/download_file.php?file=CAZyDB.07242025.fa"
+diamond makedb --in ${DATABASE_DIRECTORY}/CAZyDB.07242025.fa --db ${DATABASE_DIRECTORY}/Annotate/CAZy/CAZyDB.07242025.dmnd --threads ${N_JOBS}
+rm -rf ${DATABASE_DIRECTORY}/CAZyDB.07242025.fa
 
 # antiSMASH
-wget -qO- https://zenodo.org/records/15132672/files/antiSMASH.tar.gz?download=1 | tar -xzf - -C ${DATABASE_DIRECTORY}/Annotate/
+# wget -qO- https://zenodo.org/records/15132672/files/antiSMASH.tar.gz?download=1 | tar -xzf - -C ${DATABASE_DIRECTORY}/Annotate/
+download-antismash-databases --database-dir ${DATABASE_DIRECTORY}/antiSMASH/
 
 echo -e " _    _ _______ ______  _______\n  \  /  |______ |_____] |_____|\n   \/   |______ |_____] |     |"
 echo -e "...................................................."

@@ -24,14 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [2.5.2] - TBD
-* [Bug] Identifier mapping in binning-prokaryotic only contains gene and contig not genome [issue/#197](https://github.com/jolespin/veba/issues/197)
 * Ensure all environments work without Nvidia
 * Update KEGG pathway profiler so steps are produced
 * Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
-* Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
 * Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
 * Update `antiSMASH` version from `7.x` to `8.x`
 * [Bug] Additional options (e.g., --assembler_options='--continue') are not interpreted correctly using new syntax
+* Update `geNomad v1.12.0`
 
 ### Done
 
@@ -692,6 +691,11 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
+* [2026.3.30] - Updated `geNomad` version `1.11` to `1.12`
+* [2026.3.30] - `VEBA-DB_v9.2` contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
+* [2026.3.30] - `VEBA-DB_v9.2` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
+* [2026.3.30] - Updated `antiSMASH` version `7.x` to `8.x` in `VEBA-biosynthetic_env` and `VEBA-database_env`
 * [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
 * [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.
 * [2026.3.25] - Fixed bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was being stored in `output/`
