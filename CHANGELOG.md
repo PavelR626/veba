@@ -27,12 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Ensure all environments work without Nvidia
 * Update KEGG pathway profiler so steps are produced
 * Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
-* Update `antiSMASH` version from `7.x` to `8.x`
-* [Bug] Additional options (e.g., --assembler_options='--continue') are not interpreted correctly using new syntax
-* Update `geNomad v1.12.0`
+
 
 ### Done
-
 * [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
 * [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.
 * [2026.3.25] - Fixed bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was being stored in `output/`
@@ -690,6 +687,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.31] - Updated `VEBA-preprocess_env` to use `fastq_preprocessor==2026.3.24` which drops `genopype` for `sh` and uses `fastplong` instead of `chopper`
 * [2026.3.30] - Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
 * [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 * [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
