@@ -26,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.5.2] - TBD
 * Ensure all environments work without Nvidia
 * Update KEGG pathway profiler so steps are produced
-* Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
 * Update `fastq_preprocessor` so it includes option to remove low complexity regions by default
 * Update `antiSMASH` version from `7.x` to `8.x`
 * [Bug] Additional options (e.g., --assembler_options='--continue') are not interpreted correctly using new syntax
@@ -691,6 +690,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.3.30] - Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
 * [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 * [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
 * [2026.3.30] - Updated `geNomad` version `1.11` to `1.12`
