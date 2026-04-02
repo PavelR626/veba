@@ -55,3 +55,7 @@ bash commands.classify-eukaryotic.sh
 echo "Annotate"
 bash commands.annotate.sh
 
+# Biosynthetic
+echo "Biosynthetic"
+bash commands.biosynthetic.sh
+
