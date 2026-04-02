@@ -14,11 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.6.0] - TBD
-* Simplified annotation module (Remove UniRef and add PGAP)
-* Wrapper around Leviathan
-* Wrapper around Pangenomium
-* Change BUSCO to Compleasm
-* Remove MetaCoAG support
+* Replace `MetaEuk` with `Helixer`
+* Add `REMAG`
+* Simplified annotation module (Remove `UniRef` and add `PGAP`)
+* Wrapper around `Leviathan`
+* Wrapper around `Pangenomium`
+* Change `BUSCO` to `Compleasm`
+* Remove `MetaCoAG` support
+* Move `Metadecoder-NAL` to `Metadecoder-VEBA` and update version
 * Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules) [v2.6.0] 
 * Update `eukaryota_odb10` -> `eukaryota_odb12` in `Markers` database
 
