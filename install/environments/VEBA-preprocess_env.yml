@@ -1,4 +1,4 @@
-name: VEBA-preprocess_env__v2026.3.31
+name: VEBA-preprocess_env__v2026.4.2
 channels:
   - conda-forge
   - bioconda
@@ -20,7 +20,7 @@ dependencies:
   - charset-normalizer=3.4.6=pyhd8ed1ab_0
   - fastp=1.1.0=heae3180_0
   - fastplong=0.4.1=h224cc79_0
-  - fastq_preprocessor=2026.3.24=py_0
+  - fastq_preprocessor=2026.4.2=py_0
   - font-ttf-dejavu-sans-mono=2.37=hab24e00_0
   - font-ttf-inconsolata=3.000=h77eed37_0
   - font-ttf-source-code-pro=2.038=h77eed37_0
