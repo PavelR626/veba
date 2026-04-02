@@ -14,7 +14,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2026.3.12"
+__version__ = "2026.4.2"
 
 def get_preprocess_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
 
@@ -716,7 +716,7 @@ def create_pipeline(opts, directories, f_cmds):
     # =============
     # Output
     # =============
-    step = 5
+    step = 4
 
     program = "output"
     program_label = "{}__{}".format(step, program)

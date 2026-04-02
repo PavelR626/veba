@@ -687,6 +687,7 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.4.1] - Updated `check_installation.sh` so it uses uppercase `PASS` and `FAIL`
 * [2026.3.31] - Updated `VEBA-preprocess_env` to use `fastq_preprocessor==2026.3.24` which drops `genopype` for `sh` and uses `fastplong` instead of `chopper`
 * [2026.3.30] - Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
 * [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
