@@ -15,7 +15,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.6.5"
+__version__ = "2026.3.30"
 
 # GTDB-Tk
 def get_gtdbtk_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -57,9 +57,9 @@ def get_gtdbtk_cmd( input_filepaths, output_filepaths, output_directory, directo
 
             "&&",
 
-        "(for FP in $(cat %s); do cp $FP %s; done)"%(
-            os.path.join(directories["tmp"], "genomes.list"),
-            os.path.join(directories["tmp"],"genomes"),
+            "(for FP in $(cat %s); do ln -sf $(realpath $FP) %s; done)"%(
+                os.path.join(directories["tmp"], "genomes.list"),
+                os.path.join(directories["tmp"],"genomes"),
             ),
 
             "&&",

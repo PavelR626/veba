@@ -1,6 +1,6 @@
 #!/bin/bash
-# __version__ = "2025.4.3"
-# VEBA_DATABASE_VERSION = "VEBA-DB_v9"
+# __version__ = "2026.3.30"
+# VEBA_DATABASE_VERSION = "VEBA-DB_v9.1"
 # MICROEUKAYROTIC_DATABASE_VERSION = "MicroEuk_v3"
 # usage: bash veba/download_databases-preprocess.sh /path/to/veba_database_destination/
 
@@ -30,9 +30,10 @@ echo $DATE > ${DATABASE_DIRECTORY}/ACCESS_DATE
 echo ". .. ... ..... ........ ............."
 echo " * Processing profile HMM marker sets"
 echo ". .. ... ..... ........ ............."
-wget -v -O ${DATABASE_DIRECTORY}/MarkerSets.tar.gz https://figshare.com/ndownloader/files/36201486
+# wget -v -O ${DATABASE_DIRECTORY}/MarkerSets.tar.gz https://figshare.com/ndownloader/files/36201486
+wget -v -O ${DATABASE_DIRECTORY}/MarkerSets.tar.gz https://zenodo.org/records/18423522/files/MarkerSets.tar.gz?download=1
 tar xvzf ${DATABASE_DIRECTORY}/MarkerSets.tar.gz -C ${DATABASE_DIRECTORY}
-gzip ${DATABASE_DIRECTORY}/MarkerSets/*.hmm
+# gzip ${DATABASE_DIRECTORY}/MarkerSets/*.hmm
 rm -rf ${DATABASE_DIRECTORY}/MarkerSets.tar.gz
 
 echo -e " _    _ _______ ______  _______\n  \  /  |______ |_____] |_____|\n   \/   |______ |_____] |     |"

@@ -14,7 +14,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2025.4.10"
+__version__ = "2026.4.2"
 
 def get_preprocess_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
 
@@ -293,7 +293,7 @@ for FP in %s;
 
     # Create MAG-specific subdirectory within busco output
     OUT_DIR=$BUSCO_OUTPUT_DIRECTORY/$ID_GENOME
-    mkdir -p $OUT_DIR
+    mkdir -p -m 775 $OUT_DIR
 
     echo $FP
     echo $ID_GENOME
@@ -350,38 +350,38 @@ rm -rf $TMP_BUSCO_DIRECTORY/*
     return cmd
 
 
-def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
-    # ORF-Level Counts
-    cmd = [
+# def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
+#     # ORF-Level Counts
+#     cmd = [
 
-        "cat", 
-        os.path.join(directories[("intermediate",  "3__busco")],  "filtered","genomes","*.gff"),
-        ">",
-        os.path.join(directories["tmp"], "gene_models.eukaryotic.gff"),
-        "&&",
-        "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
-        "&&",
+#         "cat", 
+#         os.path.join(directories[("intermediate",  "3__busco")],  "filtered","genomes","*.gff"),
+#         ">",
+#         os.path.join(directories["tmp"], "gene_models.eukaryotic.gff"),
+#         "&&",
+#         "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#         "&&",
 
-    "(",
-        os.environ["featureCounts"],
-        "-G {}".format(opts.fasta),
-        "-a {}".format(os.path.join(directories["tmp"], "gene_models.eukaryotic.gff")),
-        "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-        "-F GTF",
-        "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
-        "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
-        "-g gene_id",
-        "-t CDS",
-        "-L" if opts.long_reads else "-p --countReadPairs",
-        opts.featurecounts_options,
-        " ".join(opts.bam),
-    ")",
-    "&&",
-    "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-    "&&",
-    "rm -rf {}".format(os.path.join(directories["tmp"], "gene_models.eukaryotic.gff")),
-    ]
-    return cmd
+#     "(",
+#         os.environ["featureCounts"],
+#         "-G {}".format(opts.fasta),
+#         "-a {}".format(os.path.join(directories["tmp"], "gene_models.eukaryotic.gff")),
+#         "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#         "-F GTF",
+#         "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#         "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
+#         "-g gene_id",
+#         "-t CDS",
+#         "-L" if opts.long_reads else "-p --countReadPairs",
+#         opts.featurecounts_options,
+#         " ".join(opts.bam),
+#     ")",
+#     "&&",
+#     "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#     "&&",
+#     "rm -rf {}".format(os.path.join(directories["tmp"], "gene_models.eukaryotic.gff")),
+#     ]
+#     return cmd
 
 def get_output_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
     cmd = [
@@ -666,57 +666,57 @@ def create_pipeline(opts, directories, f_cmds):
 
     steps[program] = step
 
-    # ==========
-    # featureCounts
-    # ==========
-    step = 4
+    # # ==========
+    # # featureCounts
+    # # ==========
+    # step = 4
 
-    # Info
-    program = "featurecounts"
-    program_label = "{}__{}".format(step, program)
-    description = "Counting reads"
+    # # Info
+    # program = "featurecounts"
+    # program_label = "{}__{}".format(step, program)
+    # description = "Counting reads"
 
-    # Add to directories
-    output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
+    # # Add to directories
+    # output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
 
-    # i/o
-    input_filepaths = [ 
-        opts.fasta,
-        os.path.join(directories[("intermediate",  "3__busco")],"filtered", "genomes", "*.gff"),
-        *opts.bam,
-    ]
+    # # i/o
+    # input_filepaths = [ 
+    #     opts.fasta,
+    #     os.path.join(directories[("intermediate",  "3__busco")],"filtered", "genomes", "*.gff"),
+    #     *opts.bam,
+    # ]
 
-    output_filenames = ["featurecounts.orfs.tsv.gz"]
-    output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
+    # output_filenames = ["featurecounts.orfs.tsv.gz"]
+    # output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
 
-    params = {
-        "input_filepaths":input_filepaths,
-        "output_filepaths":output_filepaths,
-        "output_directory":output_directory,
-        "opts":opts,
-        "directories":directories,
-    }
+    # params = {
+    #     "input_filepaths":input_filepaths,
+    #     "output_filepaths":output_filepaths,
+    #     "output_directory":output_directory,
+    #     "opts":opts,
+    #     "directories":directories,
+    # }
 
-    cmd = get_featurecounts_cmd(**params)
-    pipeline.add_step(
-                id=program_label,
-                description = description,
-                step=step,
-                cmd=cmd,
-                input_filepaths = input_filepaths,
-                output_filepaths = output_filepaths,
-                validate_inputs=True,
-                validate_outputs=True,
-                errors_ok=False,
-                # acceptable_returncodes={0,1,2},                    
-                log_prefix=program_label,
-    )
-    steps[program] = step
+    # cmd = get_featurecounts_cmd(**params)
+    # pipeline.add_step(
+    #             id=program_label,
+    #             description = description,
+    #             step=step,
+    #             cmd=cmd,
+    #             input_filepaths = input_filepaths,
+    #             output_filepaths = output_filepaths,
+    #             validate_inputs=True,
+    #             validate_outputs=True,
+    #             errors_ok=False,
+    #             # acceptable_returncodes={0,1,2},                    
+    #             log_prefix=program_label,
+    # )
+    # steps[program] = step
 
     # =============
     # Output
     # =============
-    step = 5
+    step = 4
 
     program = "output"
     program_label = "{}__{}".format(step, program)
@@ -743,7 +743,7 @@ def create_pipeline(opts, directories, f_cmds):
         os.path.join(directories[("intermediate",  "3__busco")],  "filtered", "genomes"),
 
         # featureCounts
-        os.path.join(directories[("intermediate",  "4__featurecounts")], "featurecounts.orfs.tsv.gz"),
+        # os.path.join(directories[("intermediate",  "4__featurecounts")], "featurecounts.orfs.tsv.gz"),
 
 
     ]
@@ -757,7 +757,7 @@ def create_pipeline(opts, directories, f_cmds):
         "genomes",
         "bins.list",
         "genome_statistics.tsv",
-        "featurecounts.orfs.tsv.gz",
+        # "featurecounts.orfs.tsv.gz",
         "identifier_mapping.metaeuk.tsv",
         "busco_results.filtered.tsv",
     ]
@@ -815,7 +815,7 @@ def add_executables_to_environment(opts):
                 "seqkit",
                 "metaeuk",
                 "busco",
-                "featureCounts",
+                # "featureCounts",
                 "tiara",
                 "barrnap",
                 "tRNAscan-SE",
@@ -975,9 +975,9 @@ def main(args=None):
     parser_trnascan.add_argument("--trnascan_plastid_searchmode", type=str, default="-O", help="tRNAscan-SE | Search mode [Default: '-O'] | https://github.com/UCSC-LoweLab/tRNAscan-SE")
     parser_trnascan.add_argument("--trnascan_plastid_options", type=str, default="", help="tRNAscan-SE | More options (e.g. --arg 1 ) [Default: ''] | https://github.com/UCSC-LoweLab/tRNAscan-SE")
 
-    # featureCounts
-    parser_featurecounts = parser.add_argument_group('featureCounts arguments')
-    parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
+    # # featureCounts
+    # parser_featurecounts = parser.add_argument_group('featureCounts arguments')
+    # parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
 
     # Options
     opts = parser.parse_args()

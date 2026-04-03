@@ -14,7 +14,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2025.4.11"
+__version__ = "2026.3.12"
 
 # geNomad
 def get_genomad_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -324,35 +324,35 @@ done
     ]
     return cmd
 
-def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
-    # ORF-Level Counts
-    cmd = [
-    "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
-    "&&",
-    "cat",
-    os.path.join(directories[("intermediate",  "2__checkv")],"filtered", "genomes","*.gff"),
-    ">",
-    os.path.join(directories["tmp"], "featurecounts", "gene_models.gff"),
-    "&&",
-        os.environ["featureCounts"],
-        "-G {}".format(input_filepaths[0]),
-        "-a {}".format(os.path.join(directories["tmp"], "featurecounts", "gene_models.gff")),
-        "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-        "-F GTF",
-        "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
-        "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
-        "-g gene_id",
-        "-t CDS",
-        "-L" if opts.long_reads else "-p --countReadPairs",
-        opts.featurecounts_options,
-        " ".join(opts.bam),
-    "&&",
-    "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-    "&&",
-    "rm -rf {}".format(os.path.join(directories["tmp"], "featurecounts","*" )),
+# def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
+#     # ORF-Level Counts
+#     cmd = [
+#     "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#     "&&",
+#     "cat",
+#     os.path.join(directories[("intermediate",  "2__checkv")],"filtered", "genomes","*.gff"),
+#     ">",
+#     os.path.join(directories["tmp"], "featurecounts", "gene_models.gff"),
+#     "&&",
+#         os.environ["featureCounts"],
+#         "-G {}".format(input_filepaths[0]),
+#         "-a {}".format(os.path.join(directories["tmp"], "featurecounts", "gene_models.gff")),
+#         "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#         "-F GTF",
+#         "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#         "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
+#         "-g gene_id",
+#         "-t CDS",
+#         "-L" if opts.long_reads else "-p --countReadPairs",
+#         opts.featurecounts_options,
+#         " ".join(opts.bam),
+#     "&&",
+#     "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#     "&&",
+#     "rm -rf {}".format(os.path.join(directories["tmp"], "featurecounts","*" )),
 
-    ]
-    return cmd
+#     ]
+#     return cmd
 
 def get_output_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
     # checkm lineage_wf --tab_table -f checkm_output/${ID}/output.tab --pplacer_threads ${N_JOBS} -t ${N_JOBS} -x fa -r ${BINS} ${OUT_DIR}
@@ -644,52 +644,52 @@ def create_pipeline(opts, directories, f_cmds):
 
     )
 
-    # ==========
-    # featureCounts
-    # ==========
-    if opts.bam is not None:
-        step += 1
+    # # ==========
+    # # featureCounts
+    # # ==========
+    # if opts.bam is not None:
+    #     step += 1
 
-        # Info
-        program = "featurecounts"
-        program_label = "{}__{}".format(step, program)
-        description = "Counting reads"
+    #     # Info
+    #     program = "featurecounts"
+    #     program_label = "{}__{}".format(step, program)
+    #     description = "Counting reads"
 
-        # Add to directories
-        output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
+    #     # Add to directories
+    #     output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
 
-        # i/o
-        input_filepaths = [ 
-            opts.fasta,
-            os.path.join(directories[("intermediate",  "2__checkv")], "filtered","genomes","*.gff"),
-            *opts.bam,
-        ]
+    #     # i/o
+    #     input_filepaths = [ 
+    #         opts.fasta,
+    #         os.path.join(directories[("intermediate",  "2__checkv")], "filtered","genomes","*.gff"),
+    #         *opts.bam,
+    #     ]
 
-        output_filenames = ["featurecounts.orfs.tsv.gz"]
-        output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
+    #     output_filenames = ["featurecounts.orfs.tsv.gz"]
+    #     output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
 
-        params = {
-            "input_filepaths":input_filepaths,
-            "output_filepaths":output_filepaths,
-            "output_directory":output_directory,
-            "opts":opts,
-            "directories":directories,
-        }
+    #     params = {
+    #         "input_filepaths":input_filepaths,
+    #         "output_filepaths":output_filepaths,
+    #         "output_directory":output_directory,
+    #         "opts":opts,
+    #         "directories":directories,
+    #     }
 
-        cmd = get_featurecounts_cmd(**params)
-        pipeline.add_step(
-                    id=program_label,
-                    description = description,
-                    step=step,
-                    cmd=cmd,
-                    input_filepaths = input_filepaths,
-                    output_filepaths = output_filepaths,
-                    validate_inputs=True,
-                    validate_outputs=True,
-                    errors_ok=False,
-                    acceptable_returncodes={0},                    
-                    log_prefix=program_label,
-        )
+    #     cmd = get_featurecounts_cmd(**params)
+    #     pipeline.add_step(
+    #                 id=program_label,
+    #                 description = description,
+    #                 step=step,
+    #                 cmd=cmd,
+    #                 input_filepaths = input_filepaths,
+    #                 output_filepaths = output_filepaths,
+    #                 validate_inputs=True,
+    #                 validate_outputs=True,
+    #                 errors_ok=False,
+    #                 acceptable_returncodes={0},                    
+    #                 log_prefix=program_label,
+    #     )
     
     # =============
     # Output
@@ -721,10 +721,10 @@ def create_pipeline(opts, directories, f_cmds):
     ]
     input_filepaths = list(map(lambda fn:os.path.join(directories[("intermediate",  "2__checkv")],"filtered", fn), input_filenames))
 
-    if opts.bam is not None:
-        input_filepaths += [ 
-            os.path.join(directories[("intermediate",  "4__featurecounts")], "featurecounts.orfs.tsv.gz")
-        ]
+    # if opts.bam is not None:
+    #     input_filepaths += [ 
+    #         os.path.join(directories[("intermediate",  "4__featurecounts")], "featurecounts.orfs.tsv.gz")
+    #     ]
 
         # "-g {}".format(input_filepaths[1]),
         # "-d {}".format(input_filepaths[2]),
@@ -741,10 +741,10 @@ def create_pipeline(opts, directories, f_cmds):
         "checkv_results.filtered.tsv",
 
     ]
-    if opts.bam is not None:
-        output_filenames += [ 
-            "featurecounts.orfs.tsv.gz",
-        ]
+    # if opts.bam is not None:
+    #     output_filenames += [ 
+    #         "featurecounts.orfs.tsv.gz",
+    #     ]
 
     output_filepaths = list(map(lambda fn:os.path.join(directories["output"], fn), output_filenames))
 
@@ -795,7 +795,7 @@ def add_executables_to_environment(opts):
                 "genomad",
                 "checkv",
                 "seqkit",
-                "featureCounts",
+                # "featureCounts",
      } | accessory_scripts
 
     if opts.path_config == "CONDA_PREFIX":
@@ -910,9 +910,9 @@ def main(args=None):
     parser_checkv.add_argument("--checkv_quality", type=str, default="High-quality,Medium-quality,Complete", help = "Comma-separated string of acceptable arguments between {High-quality,Medium-quality,Complete} [Default: High-quality,Medium-quality,Complete]")
     parser_checkv.add_argument("--miuvig_quality", type=str, default="High-quality,Medium-quality,Complete", help = "Comma-separated string of acceptable arguments between {High-quality,Medium-quality,Complete} [Default: High-quality,Medium-quality,Complete]")
 
-    # featureCounts
-    parser_featurecounts = parser.add_argument_group('featureCounts arguments')
-    parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
+    # # featureCounts
+    # parser_featurecounts = parser.add_argument_group('featureCounts arguments')
+    # parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
 
     # Options
     opts = parser.parse_args()
@@ -931,6 +931,10 @@ def main(args=None):
         assert "VEBA_DATABASE" in os.environ, "Please set the following environment variable 'export VEBA_DATABASE=/path/to/veba_database' or provide path to --veba_database"
         opts.veba_database = os.environ["VEBA_DATABASE"]
     opts.checkv_database = os.path.join(opts.veba_database, "Classify", "CheckV")
+
+    # Warning
+    if opts.bam:
+        print("featureCounts was removed so --bam is not used", file-sys.stdout)
 
     # Directories
     directories = dict()

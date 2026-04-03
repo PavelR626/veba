@@ -6,6 +6,12 @@ This document summarizes the main changes introduced between different versions 
 
 ## Summary of Changes
 
+
+### VEBA-DB_v9.1 (from VEBA-DB_v9)
+* Contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
+* Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
+*   Updated the `GTDB` database component to `r226`
+
 ### VEBA-DB_v9 (from VDB_v8.1)
 *   Updated the `geNomad` database component to `v1.8` (associated with geNomad software v1.11.0).
 *   Updated the `CheckM2 Diamond` database component ([Issue #154](https://github.com/jolespin/veba/issues/154)).
