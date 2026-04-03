@@ -43,18 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `tests/unit-tests` commands to prepare for proper unit tests
 
 ### Changed
+*   **Database**: Updated VEBA database from `VEBA-DB_v9` to `VEBA-DB_v9.1`.
+- Updated `GTDB-Tk` in `VEBA-classify-prokaryotic_env` to `2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [#177](https://github.com/jolespin/veba/issues/177)
+- `VEBA-DB_v9.1` contains the following updates: `antiSMASH` `7.x` to `8.x`; `MIBiG` `3.1` to `4.0` (required update in `annotate.py`); `CAZy` `07262023` to `07242025` (required update in `annotate.py`)
+- `VEBA-DB_v9.1` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
 - Updated `check_installation.sh` to use uppercase `PASS` and `FAIL`
 - Updated `VEBA-preprocess_env` to use `fastq_preprocessor==2026.3.24` which drops `genopype` for `sh` and uses `fastplong` instead of `chopper`
 - Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
 - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 - Updated `geNomad` from version `1.11` to `1.12`
 - Updated `antiSMASH` from version `7.x` to `8.x` in `VEBA-biosynthetic_env` and `VEBA-database_env`
-- `VEBA-DB_v9.1` contains the following updates: `antiSMASH` `7.x` to `8.x`; `MIBiG` `3.1` to `4.0` (required update in `annotate.py`); `CAZy` `07262023` to `07242025` (required update in `annotate.py`)
-- `VEBA-DB_v9.1` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
 - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
 - Updated `Metabat2` from version `2.17` to `2.18` which added descriptions to contigs, requiring an update to `scaffolds_to_bins.py`
 - Updated `binette` from `1.1.1` to `1.2.1` which changes naming, output columns, and bin dereplication behavior, requiring updates to `binning-prokaryotic.py` and `filter_binette_results.tsv`. `final_bins_quality_reports.tsv` is no longer renamed to `quality_reports.tsv`
-- Updated `GTDB-Tk` in `VEBA-classify-prokaryotic_env` to `2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [#177](https://github.com/jolespin/veba/issues/177)
 
 ### Fixed
 - Prepended `eval` to dispatch commands [#176](https://github.com/jolespin/veba/issues/176)
