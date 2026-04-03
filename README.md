@@ -53,11 +53,11 @@ ___________________________________________________________________
 
 * **Corresponding Database Version:** [`VEBA-DB_v9.1`](install/DATABASE.md)
 
-> [!NOTE]
+> [!NOTE] Regarding upcoming `2.6.0`
 > `v2.6.0` will be a significant update which will replace `MetaEuk`, `Bowtie2`, and `BUSCO` for performance improvements.  The profiling, clustering, and annotation modules will be reimplemented from the ground up.
 
-> [!NOTE]
-> As of `v2.4.2`, the `binning-prokaryotic.py` module is not entirely reproducible as [`SemiBin2`](https://github.com/BigDataBiology/SemiBin/issues/197) and [Binette](https://github.com/genotoul-bioinfo/Binette/issues/54) are stochastic (see GitHub issues).  I've developed a work-around for `Binette` stochastic behvaior but `SemiBin2` has not yet been resolved.  This is expected to change in future versions.
+> [!NOTE] Regarding `binning-prokaryotic` reproducibility
+> As of `v2.4.2`, the `binning-prokaryotic.py` module is not entirely reproducible as [`SemiBin2` (issue #197)](https://github.com/BigDataBiology/SemiBin/issues/197) and [Binette (issue #54)](https://github.com/genotoul-bioinfo/Binette/issues/54) are stochastic.  I've developed a work-around for `Binette` stochastic behvaior in `v2.5.0` but `SemiBin2` has not yet been resolved.  This is expected to change in future versions.
 
 
 For details on daily changes, please refer to the [change log](CHANGELOG.md) or [release history](https://github.com/jolespin/veba/releases)
