@@ -14,7 +14,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.11.7"
+__version__ = "2026.3.27"
 
 MARKER_SEPERATOR="|--|"
 
@@ -594,7 +594,7 @@ def main(args=None):
 
     # Muscle
     parser_alignment = parser.add_argument_group('Alignment arguments')
-    parser_alignment.add_argument("-A", "--alignment_algorithm", type=str,  default="align", choices={"align","super5"}, help = "Muscle alignment algorithm.  Align large input using Super5 algorithm if -align is too expensive.  [Default: align]")
+    parser_alignment.add_argument("-A", "--alignment_algorithm", type=str,  default="super5", choices={"align","super5"}, help = "Muscle alignment algorithm.  Align large input using Super5 algorithm if -align is too expensive.  [Default: super5]")
     parser_alignment.add_argument("-g", "--minimum_genomes_aligned_ratio", type=float,  default=0.95, help = "Minimum ratio of genomes include in alignment. This removes markers that are under represented. [Default: 0.95]")
     parser_alignment.add_argument("-m", "--minimum_markers_aligned_ratio", type=float,  default=0.2, help = "Minimum ratio of markers aligned. This removes genomes with few markers. Note, this is based on detected markers and NOT total markers in original HMM. [Default: 0.2]")
     parser_alignment.add_argument("--muscle_options", type=str, default="", help="MUSCLE | More options (e.g. --arg 1 ) [Default: '']")

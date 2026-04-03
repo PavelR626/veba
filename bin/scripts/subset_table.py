@@ -6,7 +6,7 @@ import pandas as pd
 
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2023.12.28"
+__version__ = "2025.10.11"
 
 #
 def main(args=None):
@@ -31,6 +31,7 @@ def main(args=None):
     parser.add_argument("--index_name", type=str,  help = "Add index name")
 
     parser.add_argument("-d", "--drop_duplicates", action="store_true", help = "Drop duplicates")
+    parser.add_argument("-m", "--allow_missing_index", action="store_true", help = "Allow missing indices")
 
     parser.add_argument("--sep", type=str, default="\t", help = "Separator [Default: <tab>]")
     parser.add_argument("--skiprows", type=int, help = "Skiprows")
@@ -71,17 +72,29 @@ def main(args=None):
         df = pd.DataFrame(df.to_dict(into=OrderedDict))
     if not opts.inverse:
         if opts.axis == 0:
-            assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            if not opts.allow_missing_index:
+                assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.loc[index]
         if opts.axis == 1:
-            assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            if not opts.allow_missing_index:
+                assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.loc[:,index]
     else:
         if opts.axis == 0:
-            assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            if not opts.allow_missing_index:
+                assert set(index) <= set(df.index), "--index isn't a subset of --table index"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.drop(index, axis=0)
         if opts.axis == 1:
-            assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            if not opts.allow_missing_index:
+                assert set(index) <= set(df.columns), "--index isn't a subset of --table columns"
+            else:
+                index = list(set(index) & set(df.index))
             df = df.drop(index, axis=1)
 
     # Write table

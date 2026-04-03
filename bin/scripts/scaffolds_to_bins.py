@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.3.26"
+__version__ = "2026.3.27"
 
 def main(args=None):
     # Path info
@@ -67,11 +67,11 @@ def main(args=None):
             for line in tqdm(f, filepath):
                 if opts.header:
                     if line.startswith(">"):
-                        id_scaffold = line.strip()[1:]
+                        id_scaffold = line.strip()[1:].split()[0]
                         scaffold_to_bin[id_scaffold] = id_bin 
                 else:
                     if line.startswith(">"):
-                        id_scaffold = line.strip()[1:].split(" ")[0]
+                        id_scaffold = line.strip()[1:].split()[0]
                         scaffold_to_bin[id_scaffold] = id_bin 
             f.close()
 
@@ -115,11 +115,11 @@ def main(args=None):
                 for line in tqdm(f, filepath):
                     if opts.header:
                         if line.startswith(">"):
-                            id_scaffold = line.strip()[1:]
+                            id_scaffold = line.strip()[1:].split()[0]
                             scaffold_to_bin[id_scaffold] = id_bin 
                     else:
                         if line.startswith(">"):
-                            id_scaffold = line.strip()[1:].split(" ")[0]
+                            id_scaffold = line.strip()[1:].split()[0]
                             scaffold_to_bin[id_scaffold] = id_bin 
                 f.close()
         

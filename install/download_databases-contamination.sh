@@ -1,6 +1,6 @@
 #!/bin/bash
-# __version__ = "2025.4.3"
-# VEBA_DATABASE_VERSION = "VEBA-DB_v9"
+# __version__ = "2026.3.30"
+# VEBA_DATABASE_VERSION = "VEBA-DB_v9.1"
 # MICROEUKAYROTIC_DATABASE_VERSION = "MicroEuk_v3"
 # usage: bash veba/download_databases-contamination.sh /path/to/veba_database_destination/
 
@@ -34,7 +34,8 @@ mkdir -v -p ${DATABASE_DIRECTORY}/Contamination
 
 # Ribokmers
 mkdir -v -p ${DATABASE_DIRECTORY}/Contamination/kmers
-wget -v -O ${DATABASE_DIRECTORY}/Contamination/kmers/ribokmers.fa.gz https://figshare.com/ndownloader/files/36220587
+# wget -v -O ${DATABASE_DIRECTORY}/Contamination/kmers/ribokmers.fa.gz https://figshare.com/ndownloader/files/36220587
+wget -v -O ${DATABASE_DIRECTORY}/Contamination/kmers/ribokmers.fa.gz https://zenodo.org/records/18423615/files/ribokmers.fa.gz?download=1
 
 # T2T-CHM13v2.0
 # Human (Bowtie2 Index)

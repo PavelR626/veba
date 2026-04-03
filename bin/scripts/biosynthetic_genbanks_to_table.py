@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from asyncio import protocols
-from audioop import reverse
 import sys, os, argparse, gzip, glob
 from collections import OrderedDict, defaultdict
 import pandas as pd
@@ -8,7 +6,7 @@ from Bio import SeqIO
 from tqdm import tqdm
 
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.1.16"
+__version__ = "2025.9.9"
 
 def gc_content(seq):
     seq = seq.upper()

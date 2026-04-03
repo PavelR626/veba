@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function, division
-import sys, os, argparse, glob, shutil, gzip
+import sys, os, argparse, glob, shutil, gzip, warnings
 from collections import defaultdict
 import pandas as pd
 from tqdm import tqdm 
@@ -70,8 +70,11 @@ def merge_statistics(binning_directory, sequence_type):
         
     dataframes = list()
     for filepath in tqdm(glob.glob(pattern), desc=f"Processing {sequence_type} files"):
-        df = pd.read_csv(filepath, sep="\t", index_col=0)
-        dataframes.append(df)
+        try:
+            df = pd.read_csv(filepath, sep="\t", index_col=0)
+            dataframes.append(df)
+        except pd.errors.EmptyDataError as e:
+            warnings.warn(f"{e}: {filepath}")
     # Concatenate all DataFrames
     if dataframes:
         return pd.concat(dataframes, axis=0)

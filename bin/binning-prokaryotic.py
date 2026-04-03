@@ -13,7 +13,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2025.4.9"
+__version__ = "2026.3.26"
 
 # Assembly
 def get_coverage_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -401,7 +401,7 @@ done
         "--low_mem" if opts.checkm2_low_memory else "",
         opts.binnette_options,
         
-            "&&",
+            ";", # Using ; instead of && because of this issue: https://github.com/genotoul-bioinfo/Binette/issues/58
             
         # Scaffolds to bins intermediate
         os.environ["scaffolds_to_bins.py"],
@@ -514,12 +514,12 @@ done
         ">",
         output_filepaths[-1],
         
-        # Cleanup
-            "&&",
+        # # Cleanup
+        #     "&&",
 
-        "mv",
-        os.path.join(output_directory, "final_bins_quality_reports.tsv"),
-        os.path.join(output_directory, "quality_reports.tsv"),
+        # "mv",
+        # os.path.join(output_directory, "final_bins_quality_reports.tsv"),
+        # os.path.join(output_directory, "quality_reports.tsv"),
         
             "&&",
         
@@ -604,7 +604,7 @@ def get_domain_predictions_cmd(input_filepaths, output_filepaths, output_directo
         " ".join(input_filepaths),
         "|",
         "cut",
-        "-f1,10",
+        "-f1,14",   # <-- was -f1,10
         "|",
         "tail",
         "-n +2",
@@ -718,35 +718,35 @@ done
     return cmd
 
 
-def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
-    # ORF-Level Counts
-        # Get non-empty scaffolds to bins
-    cmd = [
-        f"rm -rv {output_directory}",
-        "&&",
-        f"mkdir -p {output_directory}",
-    ]
+# def get_featurecounts_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
+#     # ORF-Level Counts
+#         # Get non-empty scaffolds to bins
+#     cmd = [
+#         f"rm -rv {output_directory}",
+#         "&&",
+#         f"mkdir -p {output_directory}",
+#     ]
     
-    cmd += [
-    "&&",
-    "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
-    "&&",
-        os.environ["featureCounts"],
-        "-G {}".format(input_filepaths[0]),
-        "-a {}".format(input_filepaths[1]),
-        "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-        "-F GTF",
-        "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
-        "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
-        "-g gene_id",
-        "-t CDS",
-        "-L" if opts.long_reads else "-p --countReadPairs",
-        opts.featurecounts_options,
-        " ".join(opts.bam),
-    "&&",
-    "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
-    ]
-    return cmd
+#     cmd += [
+#     "&&",
+#     "mkdir -p {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#     "&&",
+#         os.environ["featureCounts"],
+#         "-G {}".format(input_filepaths[0]),
+#         "-a {}".format(input_filepaths[1]),
+#         "-o {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#         "-F GTF",
+#         "--tmpDir {}".format(os.path.join(directories["tmp"], "featurecounts")),
+#         "-T {}".format(min(64, opts.n_jobs)), # The maximum number of threads featureCounts can use is 64 so any more will throw this error: "Value for argumant -T is out of range: 1 to 64"
+#         "-g gene_id",
+#         "-t CDS",
+#         "-L" if opts.long_reads else "-p --countReadPairs",
+#         opts.featurecounts_options,
+#         " ".join(opts.bam),
+#     "&&",
+#     "gzip -f {}".format(os.path.join(output_directory, "featurecounts.orfs.tsv")),
+#     ]
+#     return cmd
 
 
 def get_consolidate_cmd(input_filepaths, output_filepaths, output_directory, directories, opts, step):
@@ -809,6 +809,23 @@ S2B=$(ls {}) || (echo 'No genomes have been detected' && exit 1)
     ),
     ]
 
+    # Concatenate identifier_mapping.tsv across iterations
+    # Write to tmp first to avoid self-clobbering through the symlink created above
+    cmd += [
+            "&&",
+
+        "cat",
+        os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "identifier_mapping.tsv"),
+        ">",
+        os.path.join(directories["tmp"], "identifier_mapping.tsv"),
+
+            "&&",
+
+        "mv",
+        os.path.join(directories["tmp"], "identifier_mapping.tsv"),
+        os.path.join(output_directory, "genomes", "identifier_mapping.tsv"),
+    ]
+
     # GFF
     cmd += [ 
 """
@@ -832,8 +849,8 @@ do
 done
 
 """.format(
-    directories[("intermediate", "{}__barrnap".format(step-3))],
-    directories[("intermediate", "{}__trnascan-se".format(step-2))],
+    directories[("intermediate", "{}__barrnap".format(step-2))],
+    directories[("intermediate", "{}__trnascan-se".format(step-1))],
     os.path.join(output_directory,"genomes"),
     os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "*.fa"),
     os.environ["compile_gff.py"],
@@ -846,7 +863,7 @@ done
 
         "DST={}; for SRC in $(ls {}); do SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST; done".format(
         os.path.join(output_directory,"genomes"),
-        os.path.join(directories[("intermediate", "{}__barrnap".format(step-3))], "*.rRNA"),
+        os.path.join(directories[("intermediate", "{}__barrnap".format(step-2))], "*.rRNA"),
     ),
     ]
 
@@ -857,20 +874,20 @@ done
 
         "DST={}; for SRC in $(ls {}); do SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST; done".format(
         os.path.join(output_directory,"genomes"),
-        os.path.join(directories[("intermediate", "{}__trnascan-se".format(step-2))], "*.tRNA"),
+        os.path.join(directories[("intermediate", "{}__trnascan-se".format(step-1))], "*.tRNA"),
     ),
     ]
 
 
     
-    # featureCounts
-    cmd += [
-            "&&",
-        "SRC={}; DST={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST".format(
-            os.path.join(directories[("intermediate", "{}__featurecounts".format(step-1))], "featurecounts.orfs.tsv.gz"),
-            output_directory,
-        ),
-        ]
+    # # featureCounts
+    # cmd += [
+    #         "&&",
+    #     "SRC={}; DST={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST".format(
+    #         os.path.join(directories[("intermediate", "{}__featurecounts".format(step-1))], "featurecounts.orfs.tsv.gz"),
+    #         output_directory,
+    #     ),
+    #     ]
         
     # SeqKit
     cmd += [ 
@@ -1685,51 +1702,51 @@ def create_pipeline(opts, directories, f_cmds):
     steps[program] = step
 
 
-    # ==========
-    # featureCounts
-    # ==========
-    step += 1
+    # # ==========
+    # # featureCounts
+    # # ==========
+    # step += 1
 
-    # Info
-    program = "featurecounts"
-    program_label = "{}__{}".format(step, program)
-    description = "Counting reads"
+    # # Info
+    # program = "featurecounts"
+    # program_label = "{}__{}".format(step, program)
+    # description = "Counting reads"
 
-    # Add to directories
-    output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
+    # # Add to directories
+    # output_directory = directories[("intermediate",  program_label)] = create_directory(os.path.join(directories["intermediate"], program_label))
 
-    # i/o
-    input_filepaths = [ 
-        opts.fasta,
-        os.path.join(directories[("intermediate",  "2__pyrodigal")], "gene_models.gff"),
-        *opts.bam,
-    ]
+    # # i/o
+    # input_filepaths = [ 
+    #     opts.fasta,
+    #     os.path.join(directories[("intermediate",  "2__pyrodigal")], "gene_models.gff"),
+    #     *opts.bam,
+    # ]
 
-    output_filenames = ["featurecounts.orfs.tsv.gz"]
-    output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
+    # output_filenames = ["featurecounts.orfs.tsv.gz"]
+    # output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
 
-    params = {
-        "input_filepaths":input_filepaths,
-        "output_filepaths":output_filepaths,
-        "output_directory":output_directory,
-        "opts":opts,
-        "directories":directories,
-    }
+    # params = {
+    #     "input_filepaths":input_filepaths,
+    #     "output_filepaths":output_filepaths,
+    #     "output_directory":output_directory,
+    #     "opts":opts,
+    #     "directories":directories,
+    # }
 
-    cmd = get_featurecounts_cmd(**params)
-    pipeline.add_step(
-                id=program_label,
-                description = description,
-                step=step,
-                cmd=cmd,
-                input_filepaths = input_filepaths,
-                output_filepaths = output_filepaths,
-                validate_inputs=True,
-                validate_outputs=True,
-                errors_ok=False,
-                acceptable_returncodes={0,1,2},                    
-                log_prefix=program_label,
-    )
+    # cmd = get_featurecounts_cmd(**params)
+    # pipeline.add_step(
+    #             id=program_label,
+    #             description = description,
+    #             step=step,
+    #             cmd=cmd,
+    #             input_filepaths = input_filepaths,
+    #             output_filepaths = output_filepaths,
+    #             validate_inputs=True,
+    #             validate_outputs=True,
+    #             errors_ok=False,
+    #             acceptable_returncodes={0,1,2},                    
+    #             log_prefix=program_label,
+    # )
     
     
     # =============
@@ -1754,7 +1771,7 @@ def create_pipeline(opts, directories, f_cmds):
         # os.path.join(directories["intermediate"], "*__binette",  "filtered", "binned.list"),
         os.path.join(directories["intermediate"], "*__binette",  "filtered", "checkm2_results.filtered.tsv"),
         os.path.join(directories["intermediate"], "*__binette", "filtered", "genomes", "*"),
-        os.path.join(directories[("intermediate", "{}__featurecounts".format(step-1))], "featurecounts.orfs.tsv.gz"),
+        # os.path.join(directories[("intermediate", "{}__featurecounts".format(step-1))], "featurecounts.orfs.tsv.gz"),
 
         # Can't assume these are not empty
         # os.path.join(directories[("intermediate", "{}__trnascan-se".format(step-2))], "*.tRNA"), 
@@ -1768,7 +1785,7 @@ def create_pipeline(opts, directories, f_cmds):
         "unbinned.fasta",
         "genomes",
         "checkm2_results.filtered.tsv",
-        "featurecounts.orfs.tsv.gz",
+        # "featurecounts.orfs.tsv.gz",
         "genome_statistics.tsv",
         "gene_statistics.cds.tsv",
         "gene_statistics.rRNA.tsv",
@@ -1830,7 +1847,7 @@ def add_executables_to_environment(opts):
                 "checkm2",
                 "tiara",
                 "seqkit",
-                "featureCounts",
+                # "featureCounts",
                 "barrnap",
                 "tRNAscan-SE",
                 # "parallel",
@@ -2001,9 +2018,9 @@ def main(args=None):
     parser_trnascan = parser.add_argument_group('tRNAscan-SE arguments')
     parser_trnascan.add_argument("--trnascan_options", type=str, default="", help="tRNAscan-SE | More options (e.g. --arg 1 ) [Default: ''] | https://github.com/UCSC-LoweLab/tRNAscan-SE")
 
-    # featureCounts
-    parser_featurecounts = parser.add_argument_group('featureCounts arguments')
-    parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
+    # # featureCounts
+    # parser_featurecounts = parser.add_argument_group('featureCounts arguments')
+    # parser_featurecounts.add_argument("--featurecounts_options", type=str, default="", help="featureCounts | More options (e.g. --arg 1 ) [Default: ''] | http://bioinf.wehi.edu.au/featureCounts/")
 
     # Tiara
     parser_domain = parser.add_argument_group('Domain classification arguments')

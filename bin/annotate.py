@@ -15,7 +15,7 @@ from soothsayer_utils.soothsayer_utils import assert_acceptable_arguments
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2024.11.15"
+__version__ = "2026.3.30"
 
 DIAMOND_HEADER_FIELDS = "qseqid sseqid stitle pident evalue bitscore qcovhsp scovhsp"
 
@@ -446,7 +446,7 @@ def create_pipeline(opts, directories, f_cmds):
     # i/o
     input_filepaths = [
         opts.proteins, 
-         os.path.join(opts.veba_database, "Annotate", "MIBiG", "mibig_v3.1.dmnd"),
+         os.path.join(opts.veba_database, "Annotate", "MIBiG", "mibig_v4.0.dmnd"),
         ]
     output_filenames = ["output.tsv.gz"]
     output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
@@ -532,7 +532,7 @@ def create_pipeline(opts, directories, f_cmds):
     # i/o
     input_filepaths = [
         opts.proteins, 
-         os.path.join(opts.veba_database, "Annotate", "CAZy", "CAZyDB.07262023.dmnd"),
+         os.path.join(opts.veba_database, "Annotate", "CAZy", "CAZyDB.07242025.dmnd"),
         ]
     output_filenames = ["output.tsv.gz"]
     output_filepaths = list(map(lambda filename: os.path.join(output_directory, filename), output_filenames))
@@ -918,6 +918,14 @@ def main(args=None):
     if opts.veba_database is None:
         assert "VEBA_DATABASE" in os.environ, "Please set the following environment variable 'export VEBA_DATABASE=/path/to/veba_database' or provide path to --veba_database"
         opts.veba_database = os.environ["VEBA_DATABASE"]
+
+    # UniRef check
+    if opts.uniref == "uniref90":
+        uniref90_path = os.path.join(opts.veba_database, "Annotate", "UniRef", "uniref90.dmnd")
+        if not os.path.exists(uniref90_path):
+            print(f"Either use `--uniref uniref50` or build `uniref90` database at {uniref90_path}")
+            sys.exit(1)
+
 
     # Directories
     directories = dict()

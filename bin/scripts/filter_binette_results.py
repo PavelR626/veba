@@ -1,36 +1,13 @@
 #!/usr/bin/env python
-import sys, os, glob, argparse, re
-from shutil import copyfile
-from typing import OrderedDict
-# from collections import OrderedDict
+import sys, os, glob, argparse
+from collections import OrderedDict
 import pandas as pd
 from tqdm import tqdm
 import xxhash
 
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2025.4.4"
+__version__ = "2026.3.24"
 
-def parse_binette_initial_bin_combinations(combination:str):
-    """
-    Parses a list of bin combinations to extract unique bins.
-
-    Parameters:
-        bin_combinations (list of str): A list of strings containing bin combinations.
-
-    Returns:
-        set: A set of unique bins as strings.
-    """
-    unique_bins = set()
-
-    # Split by delimiters (-, &, |)
-    parts = re.split(r"[-&|]", combination)
-
-    for part in parts:
-        # Strip whitespace and check if the part is numeric or a bin identifier
-        part = part.strip()
-        if part:
-            unique_bins.add(part)
-    return unique_bins
 
 def main(args=None):
     # Path info
@@ -58,8 +35,6 @@ def main(args=None):
     parser.add_argument("-e", "--exclude",  help="List of genomes to exclude (e.g., eukaryotic genomes)")
     parser.add_argument("-d","--domain_predictions", type=str,  help = "Tab-seperated table of domain predictions [id_genome]<tab>[id_domain], No header.")
 
-    # parser.add_argument("--symlink", action="store_true", help = "Symlink MAGs instead of copying")
-
     # Options
     opts = parser.parse_args()
     opts.script_directory  = script_directory
@@ -82,10 +57,10 @@ def main(args=None):
     if exclude_mags:
         print("Excluding the following MAGs:", exclude_mags, file=sys.stderr)
         
-    # Use hash
-    magold_to_hash = dict()
-    for filepath in tqdm(glob.glob(os.path.join(opts.binette_directory, "final_bins", "*.fa")), "Creating hashes for each MAG", unit=" MAGs"):
-        id_mag = filepath.split("/")[-1][:-3]
+    # Compute content-addressable hashes for each MAG
+    binette_name_to_hash = dict()
+    for filepath in tqdm(glob.glob(os.path.join(opts.binette_directory, "final_bins", "*.{}".format(opts.extension))), "Creating hashes for each MAG", unit=" MAGs"):
+        id_mag = os.path.basename(filepath).rsplit(".", 1)[0]
         contigs = set()
         with open(filepath, "r") as f:
             for line in f:
@@ -95,12 +70,11 @@ def main(args=None):
                     id_contig = header.split(" ", maxsplit=1)[0]
                     contigs.add(id_contig)
         contigs_repr = repr(sorted(contigs))
-        magold_to_hash[id_mag] = xxhash.xxh32(contigs_repr, seed=0).hexdigest()
+        binette_name_to_hash[id_mag] = xxhash.xxh32(contigs_repr, seed=0).hexdigest()
                 
-    # Load CheckM2
-    # bin_id  origin  name    completeness    contamination   score   size    N50     contig_count
-    df_quality_report = pd.read_csv(os.path.join(opts.binette_directory, "final_bins_quality_reports.tsv"),sep="\t", index_col=0)
-    df_quality_report.index = df_quality_report.index.map(lambda x: f"bin_{x}")
+    # Load quality report (binette v1.2.1 format)
+    # Columns: name, origin, is_original, original_name, completeness, contamination, score, checkm2_model, size, N50, coding_density, contig_count
+    df_quality_report = pd.read_csv(os.path.join(opts.binette_directory, "final_bins_quality_reports.tsv"), sep="\t", index_col=0)
     
     if opts.domain_predictions:
         print("Adding domain predictions", file=sys.stderr)
@@ -108,12 +82,12 @@ def main(args=None):
         df_quality_report["domain"] = mag_to_domain
     
     # Quality assessment on MAGs
-    magold_to_magnew = dict()
+    binette_name_to_magnew = dict()
     mags = list()
 
     for id_mag, row in tqdm(df_quality_report.iterrows(), "Filtering MAGs", unit=" MAGs"):
-        origin = row["origin"]
-        name = row["name"]
+        is_original = row["is_original"]
+        original_name = row["original_name"]
         completeness = row["completeness"]
         contamination = row["contamination"]
 
@@ -124,54 +98,28 @@ def main(args=None):
             id_mag not in exclude_mags,
         ]
         if all(conditions):
-            if (origin not in {"diff", "union", "intersec"}) and  (";" not in origin):
-                new_mag = name
+            if is_original:
+                new_mag = original_name
             else:
-                new_mag = f"{opts.bin_prefix}{magold_to_hash[id_mag]}"
-                # new_mag = f"{opts.bin_prefix}{id_mag}"
-            magold_to_magnew[id_mag] = new_mag
+                new_mag = "{}{}".format(opts.bin_prefix, binette_name_to_hash[id_mag])
+            binette_name_to_magnew[id_mag] = new_mag
             mags.append(id_mag)
-    pd.Series(magold_to_magnew).to_frame().to_csv(os.path.join(opts.output_directory, "initial_to_filtered.tsv"), sep="\t", header=None)
-    
-
-    
-    # Initial bins
-    dataframes = list()
-    for filepath_initial in glob.glob(os.path.join(opts.binette_directory, "input_bins_quality_reports", "*.tsv")):
-        df = pd.read_csv(filepath_initial, sep="\t", index_col=0)
-        dataframes.append(df)
-    df_initial = pd.concat(dataframes, axis=0)
-    df_initial.index = df_initial.index.map(str)
-    initial_to_genome = df_initial["name"].to_dict()
+    pd.Series(binette_name_to_magnew).to_frame().to_csv(os.path.join(opts.output_directory, "initial_to_filtered.tsv"), sep="\t", header=None)
 
     # Build quality report
-    df_quality_report_filtered = df_quality_report.loc[mags,:]
-    df_quality_report_filtered.index = df_quality_report_filtered.index.map(lambda x: magold_to_magnew[x])
-    
-    # Add initial bins to quality report
-    genome_to_initial = dict()
-    for id_genome, combination in df_quality_report_filtered["name"].items():
-        initial_bins = parse_binette_initial_bin_combinations(combination)
-        initial_bins_labeled = set()
-        for id_bin_number in initial_bins:
-            try:
-                id_initial_bin = initial_to_genome[id_bin_number]
-                initial_bins_labeled.add((id_bin_number, id_initial_bin))
-            except KeyError:
-                initial_bins_labeled.add(id_bin_number)
-        genome_to_initial[id_genome] = initial_bins_labeled
-    df_quality_report_filtered["initial_bins"] = pd.Series(genome_to_initial, dtype=object)
+    df_quality_report_filtered = df_quality_report.loc[mags,:].copy()
+    df_quality_report_filtered.insert(0, "binette_name", df_quality_report_filtered.index)
+    df_quality_report_filtered.index = df_quality_report_filtered.index.map(lambda x: binette_name_to_magnew[x])
     
     # Write quality report
-    # df_quality_report_filtered.columns = df_quality_report_filtered.columns.map(str.capitalize)
     df_quality_report_filtered = df_quality_report_filtered.sort_index()
-    df_quality_report_filtered.indexname = "id_genome"
+    df_quality_report_filtered.index.name = "bin_id"
     df_quality_report_filtered.to_csv(os.path.join(opts.output_directory,"checkm2_results.filtered.tsv"), sep="\t") 
 
-    #bins.list
+    # bins.list
     with open(os.path.join(opts.output_directory, "bins.list"), "w") as f_bins:
         for id_mag in sorted(mags):
-            print(magold_to_magnew[id_mag], file=f_bins)
+            print(binette_name_to_magnew[id_mag], file=f_bins)
 
     # binned.list
     f_binned_list = open(os.path.join(opts.output_directory, "binned.list"), "w")
@@ -180,21 +128,22 @@ def main(args=None):
     scaffold_to_mag = OrderedDict()
     for id_mag in tqdm(mags, "Copying fasta files and writing binned contigs", unit=" MAGs"):
 
-        for src in glob.glob(os.path.join(opts.binette_directory, "final_bins", "{}.*".format(id_mag))):
-            dst = os.path.join(opts.output_directory,"genomes", "{}.fa".format(magold_to_magnew[id_mag]))
-            copyfile(src,dst)
+        src = os.path.join(opts.binette_directory, "final_bins", "{}.{}".format(id_mag, opts.extension))
+        dst = os.path.join(opts.output_directory, "genomes", "{}.fa".format(binette_name_to_magnew[id_mag]))
+        # Use file copy instead of shutil.copyfile to handle edge cases
+        from shutil import copyfile
+        copyfile(src, dst)
 
         # Write contigs to list
-        path_genome_assembly = os.path.join(opts.binette_directory, "final_bins", "{}.{}".format(id_mag, opts.extension))
-        with open(path_genome_assembly, "r") as f_fasta:
+        with open(src, "r") as f_fasta:
             for line in f_fasta:
                 line = line.strip()
                 if line.startswith(">"):
                     header = line[1:]
-                    id_contig = header.split(" ")[0].strip() # Remove fasta description
+                    id_contig = header.split(" ")[0].strip()
                     print(id_contig, file=f_binned_list)
                     binned_contigs.add(id_contig)
-                    scaffold_to_mag[id_contig] = magold_to_magnew[id_mag]
+                    scaffold_to_mag[id_contig] = binette_name_to_magnew[id_mag]
     f_binned_list.close()
     scaffold_to_mag = pd.Series(scaffold_to_mag)
     scaffold_to_mag.to_frame().to_csv(os.path.join(opts.output_directory,"scaffolds_to_bins.tsv"), sep="\t", header=None)

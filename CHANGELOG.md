@@ -13,6 +13,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - TBD
+
+### Add
+* Add `REMAG` binner
+* Add `PGAP` HMMs
+
+### Change
+* Replace `MetaEuk` with `Helixer`
+* Replace `TransDecoder` with `TD2`
+* Replace `BUSCO` with `Compleasm`
+* Replace `profile-*` modules with  `Leviathan`
+* Replace `cluster` module with `Pangenomium`
+* Rename `Metadecoder-NAL` to `Metadecoder-VEBA` repo and update version
+* Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules)
+* Update `eukaryota_odb10` -> `eukaryota_odb12` in `Markers` database
+* Simplify `annotate` module
+* Add ability for custom databases
+* When annotating proteins, create a hash representation and a dictionary of redundant sequences to decrease search space
+
+### Remove
+* Remove `MetaCoAG` support
+* Remove `UniRef` support
+
+## [2.5.2] - 2026-04-03
+
+### Added
+- `reformat_compleasm_results.py` script
+- `tests/unit-tests` commands to prepare for proper unit tests
+
+### Changed
+*   **Database**: Updated VEBA database from `VEBA-DB_v9` to `VEBA-DB_v9.1`.
+- Updated `GTDB-Tk` in `VEBA-classify-prokaryotic_env` to `2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [#177](https://github.com/jolespin/veba/issues/177)
+- `VEBA-DB_v9.1` contains the following updates: `antiSMASH` `7.x` to `8.x`; `MIBiG` `3.1` to `4.0` (required update in `annotate.py`); `CAZy` `07262023` to `07242025` (required update in `annotate.py`)
+- `VEBA-DB_v9.1` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
+- Updated `check_installation.sh` to use uppercase `PASS` and `FAIL`
+- Updated `VEBA-preprocess_env` to use `fastq_preprocessor==2026.3.24` which drops `genopype` for `sh` and uses `fastplong` instead of `chopper`
+- Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
+- Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
+- Updated `geNomad` from version `1.11` to `1.12`
+- Updated `antiSMASH` from version `7.x` to `8.x` in `VEBA-biosynthetic_env` and `VEBA-database_env`
+- Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
+- Updated `Metabat2` from version `2.17` to `2.18` which added descriptions to contigs, requiring an update to `scaffolds_to_bins.py`
+- Updated `binette` from `1.1.1` to `1.2.1` which changes naming, output columns, and bin dereplication behavior, requiring updates to `binning-prokaryotic.py` and `filter_binette_results.tsv`. `final_bins_quality_reports.tsv` is no longer renamed to `quality_reports.tsv`
+
+### Fixed
+- Prepended `eval` to dispatch commands [#176](https://github.com/jolespin/veba/issues/176)
+- Bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was stored in `output/`
+- Bug in rare case of missing UniRef fields [#181](https://github.com/jolespin/veba/issues/181)
+- Bug in rare case of a contig/scaffold identifier being assigned to more than one bin within `get_partition_organelle_sequences_multiple_cmd` in `eukaryotic_gene_modeling_wrapper.py` used by `binning-eukaryotic.py` due to overlapping naming scheme [#175](https://github.com/jolespin/veba/issues/175)
+- Extra `;` added to GFF by `filter_busco_results.py` when organelles were detected in eukaryotic bins [#173](https://github.com/jolespin/veba/issues/173)
+- Changed `;` to `&&` between subcommands in `Binette` stage for `binning-prokaryotic.py` due to [Binette #58](https://github.com/genotoul-bioinfo/Binette/issues/58)
+
+### Removed
+- `featureCounts` from binning modules
+
 ## [2.5.1] - 2025.04.12
 
 ### Added
@@ -606,16 +661,14 @@ ________________________________________________________________
 
 **Critical:**
 
-* Symlink genomes in `classify-prokaryotic.py` instead of copying genomes [v2.6.0]
-* Cluster module doesn't symlink global directory correctly on MacOS [v2.6.0]
-* Return code for `cluster.py` when it fails during global and local clustering is 0 but should be 1. [v2.6.0]
-* Don't load all genomes, proteins, and cds into memory for clustering.  Also, too many files are opened with large genomics datasets. [v2.6.0]
+* Cluster module doesn't symlink global directory correctly on MacOS (Fixed in `Pangenomium`)
+* Return code for `cluster.py` when it fails during global and local clustering is 0 but should be 1. (Fixed in `Pangenomium`)
+* Don't load all genomes, proteins, and cds into memory for clustering.  Also, too many files are opened with large genomics datasets (Fixed in `Pangenomium`)
 * Genome checkpoints in `tRNAscan-SE` aren't working properly.
 
 **Definitely:**
 
 * Update `eukaryota_odb10` -> `eukaryota_odb12` in `Markers` database
-* Modify `COMEbin` so it can be used in the same environment as `Binette` and `CheckM2`
 * When annotating proteins, create a hash representation and a dictionary of redundant sequences to decrease search space [v2.6.0]
 * Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules) [v2.6.0] 
 * Number of plasmids (via `geNomad`) for each MAG. [v2.6.0]
@@ -626,32 +679,29 @@ ________________________________________________________________
 * Develop method for building and curating HMM cutoffs (e.g., comparing against false positives)
 * Add `frozenset` for proteins that has all of the database identifiers
 * Add `--proteins` option to `classify-eukaryotic.py` which aligns proteins to `MicroEuk100.eukaryota_odb10` via `MMseqs2` and then proceeds with the pipeline.
-* Build SQL databases from all results
-* Remove `p__Arthropoda` from `MicroEuk` database
+* Remove `p__Arthropoda` and bacteria from `MicroEuk` database [issue #192](https://github.com/jolespin/veba/issues/192)
 * Add number of unique protein clusters to `identifier_mapping.genomes.tsv.gz` in `cluster.py` to assess most metabolicly diverse representative.
 * Add `BiNI` biosynthetic novelty index to `biosynthetic.py`
-* `busco_wrapper.py` that relabels all the genes, runs analysis, then converts output to tsv.
 * Use `pigz` instead of `gzip`
 * Add representative to `identifier_mapping.proteins.tsv.gz`
-* Use `aria2` in parallel instead of `wget`.
 * Add support for `Salmon` in `mapping.py` and `index.py`.  This can be used instead of `STAR` which will require adding the `exon` field to `Pyrodigal` GFF file (`MetaEuk` modified GFF files already have exon ids). 
+* Swap [`TransDecoder`](https://github.com/TransDecoder/TransDecoder) for [`TD2`](https://github.com/anonconda/TranSuite)
 
 
 **Eventually (Yes)?:**
 
-* `NextFlow` support
+* `NextFlow` support for version 3
 * Install each module via `bioconda`
 * Consistent usage of the following terms: 1) dataframe vs. table; 2) protein-cluster vs. orthogroup.  Dataframes should refer to generic tables while tables refer to specifics like "genomes table".
 * Add coding density to GFF files
 * Run `cmsearch` before `tRNAscan-SE`
-* DN/DS from pangeome analysis
-* For viral binning, contigs that are not identified as viral via `geNomad -> CheckV` use with `vRhyme`.
+* For viral binning, contigs that are not identified as viral via `geNomad -> CheckV` use with `vRhyme`
 * Add `vRhyme` to `binning_wrapper.py` and support `vRhyme` in `binning-viral.py`.
 * Different binning modes such as `ensemble-algorithm` (default) but also allow for `ensemble-seed` which allows for the same algorithm to be run multiple times different random states
+* Modify `COMEbin` so it can be used in the same environment as `Binette` and `CheckM2`
 
 **...Maybe (Not)?**
-* Swap [`TransDecoder`](https://github.com/TransDecoder/TransDecoder) for [`TransSuite`](https://github.com/anonconda/TranSuite)
-
+* DN/DS from pangeome analysis
 
 ________________________________________________________________
 
@@ -659,6 +709,27 @@ ________________________________________________________________
 <details>
 	<summary> <b>Daily Change Log:</b> </summary>
 
+* [2026.4.1] - Updated `check_installation.sh` so it uses uppercase `PASS` and `FAIL`
+* [2026.3.31] - Updated `VEBA-preprocess_env` to use `fastq_preprocessor==2026.3.24` which drops `genopype` for `sh` and uses `fastplong` instead of `chopper`
+* [2026.3.30] - Symlink genomes in `classify-prokaryotic.py` instead of copying genomes
+* [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
+* [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
+* [2026.3.30] - Updated `geNomad` version `1.11` to `1.12`
+* [2026.3.30] - `VEBA-DB_v9.1` contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
+* [2026.3.30] - `VEBA-DB_v9.1` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
+* [2026.3.30] - Updated `antiSMASH` version `7.x` to `8.x` in `VEBA-biosynthetic_env` and `VEBA-database_env`
+* [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
+* [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.
+* [2026.3.25] - Fixed bug where `identifier_mapping.tsv` was symlinked instead of concatenated so only the last file was being stored in `output/`
+* [2026.3.24] - Updated `binette` from `1.1.1` to `1.2.1` which changes behavior of naming, output columns, and bin dereplication which required updating `binning-prokaryotic.py` and `filter_binette_results.tsv`.  Now `final_bins_quality_reports.tsv` is not changed to `quality_reports.tsv`.
+* [2026.3.12] - Remove `featureCounts` from binning modules
+* [2025.9.18] - Added `reformat_compleasm_results.py`
+* [2025.6.26] - Added `tests/unit-tests` commands to prepare for proper unit tests
+* [2025.5.29] - Updated `GTDB-Tk` version `VEBA-classify-prokaryotic_env` to `GTDB-Tk==2.4.1` and `gtdb_r226` in `VEBA-DB_v9.1` [Issue #177](https://github.com/jolespin/veba/issues/177)
+* [2025.5.26] - Fixed bug in rare case of missing UniRef fields [Issue #181](https://github.com/jolespin/veba/issues/181)
+* [2025.4.25] - Fixed bug in rare case of a contig/scaffold identifier being assigned to more than 1 bin within `get_partition_organelle_sequences_multiple_cmd` command in `eukaryotic_gene_modeling_wrapper.py` used by the `binning-eukaryotic.py` because of overlapping naming scheme [Issue #175](https://github.com/jolespin/veba/issues/175)
+* [2025.4.24] - Removed extra `;` that was added to GFF by `filter_busco_results.py` when organelles were detected in eukaryotic bins [Issue #173](https://github.com/jolespin/veba/issues/173)
+* [2025.4.14] - Changed `;` instead of `&&` between subcommands in `Binette` stage for `binning-prokaryotic.py` because of [Binette Issue #58](https://github.com/genotoul-bioinfo/Binette/issues/58)
 * [2025.4.11] - Added `install-gpu.sh` which installs GPU accelerated environments when applicable (i.e., `VEBA-binning-prokaryotic_env` and `VEBA-binning-viral_env`)
 * [2025.4.11] - Added `Dockerfile-GPU` which is experimental
 * [2025.4.11] - Changed `install.sh` so it only installs CPU-based environments [Issue #167](https://github.com/jolespin/veba/issues/167)

@@ -1,4 +1,4 @@
-name: VEBA-binning-viral_env__v2025.4.11
+name: VEBA-binning-viral_env__v2026.3.30
 channels:
   - conda-forge
   - bioconda
@@ -30,7 +30,7 @@ dependencies:
   - flatbuffers=24.12.23=h8f4948b_0
   - gast=0.6.0=pyhd8ed1ab_0
   - gawk=5.3.1=hcd3d067_0
-  - genomad=1.11.0=pyhdfd78af_0
+  - genomad=1.12.0=pyhdfd78af_0
   - genopype=2023.5.15=py_0
   - giflib=5.2.2=hd590300_0
   - gmp=6.3.0=hac33072_2
