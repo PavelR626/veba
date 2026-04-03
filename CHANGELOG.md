@@ -14,19 +14,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.6.0] - TBD
+
+### Add
+* Add `REMAG` binner
+* Add `PGAP` HMMs
+
+### Change
 * Replace `MetaEuk` with `Helixer`
 * Replace `TransDecoder` with `TD2`
-* Add `REMAG`
-* Simplified annotation module (Remove `UniRef` and add `PGAP`)
-* Wrapper around `Leviathan`
-* Wrapper around `Pangenomium`
-* Change `BUSCO` to `Compleasm`
-* Deprecate `MetaCoAG` support
-* Move `Metadecoder-NAL` to `Metadecoder-VEBA` and update version
-* Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules) [v2.6.0] 
+* Replace `BUSCO` with `Compleasm`
+* Replace `profile-*` modules with  `Leviathan`
+* Replace `cluster` module with `Pangenomium`
+* Rename `Metadecoder-NAL` to `Metadecoder-VEBA` repo and update version
+* Replace `Bowtie2` with `strobealign` and `Fairy` when applicable (i.e., `coverage`, `assembly`, `binning`, `index`, and `mapping` modules)
 * Update `eukaryota_odb10` -> `eukaryota_odb12` in `Markers` database
-* When annotating proteins, create a hash representation and a dictionary of redundant sequences to decrease search space [v2.6.0]
+* Simplify `annotate` module
+* Add ability for custom databases
+* When annotating proteins, create a hash representation and a dictionary of redundant sequences to decrease search space
 
+### Remove
+* Remove `MetaCoAG` support
+* Remove `UniRef` support
 
 ## [2.5.2] - 2026-04-03
 
