@@ -6,7 +6,10 @@ This document summarizes the main changes introduced between different versions 
 
 ## Summary of Changes
 
-### VEBA-DB_v9.1 (from VEB-DB_v9)
+
+### VEBA-DB_v9.1 (from VEBA-DB_v9)
+* Contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
+* Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 *   Updated the `GTDB` database component to `r226`
 
 ### VEBA-DB_v9 (from VDB_v8.1)

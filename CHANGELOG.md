@@ -696,8 +696,8 @@ ________________________________________________________________
 * [2026.3.30] - Made `uniref90` optional in `annotate.py` and not built by default in `download_databases-annotate.sh`
 * [2026.3.30] - Prepended `eval` to dispatch commands [issue/#176](https://github.com/jolespin/veba/issues/176)
 * [2026.3.30] - Updated `geNomad` version `1.11` to `1.12`
-* [2026.3.30] - `VEBA-DB_v9.2` contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
-* [2026.3.30] - `VEBA-DB_v9.2` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
+* [2026.3.30] - `VEBA-DB_v9.1` contains the following updates: 1) `antiSMASH` version `7.x` to `8.x`; 2) `MIBiG` version `3.1` to `4.0` (required update in `annotate.py`); `CAZy` version `07262023` to `07242025` (required update in `annotate.py`)
+* [2026.3.30] - `VEBA-DB_v9.1` uses `download-antismash-databases` executable from `antiSMASH` in `download_databases-annotate.sh`
 * [2026.3.30] - Updated `antiSMASH` version `7.x` to `8.x` in `VEBA-biosynthetic_env` and `VEBA-database_env`
 * [2026.3.27] - Changed default `--alignment_algorithm` from `align` to `super5` in `phylogeny.py`
 * [2026.3.27] - Updated `Metabat2` version from `2.17` to `2.18` which added descriptions to contigs which required an update to the `scaffolds_to_bins.py` script.

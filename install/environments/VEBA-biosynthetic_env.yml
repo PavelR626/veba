@@ -1,4 +1,4 @@
-name: VEBA-biosynthetic_env__v2026.3.28
+name: VEBA-biosynthetic_env__v2026.4.2
 channels:
   - conda-forge
   - bioconda
@@ -49,6 +49,7 @@ dependencies:
   - keyutils=1.6.3=hb9d3cd8_0
   - kiwisolver=1.5.0=py312h0a2e395_0
   - krb5=1.22.2=ha1258a1_0
+  - krona=2.8.1=pl5321hdfd78af_1
   - lcms2=2.18=h0c24ade_0
   - ld_impl_linux-64=2.45.1=default_hbd61a6d_102
   - lerc=4.1.0=hdb68285_0
