@@ -13,7 +13,7 @@ from soothsayer_utils import *
 pd.options.display.max_colwidth = 100
 # from tqdm import tqdm
 __program__ = os.path.split(sys.argv[0])[-1]
-__version__ = "2026.3.30"
+__version__ = "2026.4.3"
 
 # antiSMASH
 def get_antismash_from_genomes_cmd( input_filepaths, output_filepaths, output_directory, directories, opts):
@@ -413,7 +413,12 @@ def get_novelty_score_cmd(input_filepaths, output_filepaths, output_directory, d
     ]
     return cmd
 
-# MMSEQS2
+# =============================================================================
+# Fixed get_mmseqs2_protein_cmd
+# Changes:
+#   - Replaced semicolons with && in symlink commands to prevent
+#     unconditional execution when clustering_wrapper.py fails
+# =============================================================================
 def get_mmseqs2_protein_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
     cmd = [
         "cat",
@@ -423,9 +428,9 @@ def get_mmseqs2_protein_cmd(input_filepaths, output_filepaths, output_directory,
         "-d",
         ">",
         os.path.join(directories["tmp"], "components.concatenated.faa"),
-
+ 
             "&&",
-
+ 
         "cat",
         os.path.join(directories["tmp"], "components.concatenated.faa"),
         "|",
@@ -436,9 +441,9 @@ def get_mmseqs2_protein_cmd(input_filepaths, output_filepaths, output_directory,
         'cut -f1 -d " "', # Should the original gene names be used or the new component id?
         ">",
         os.path.join(directories["tmp"], "components.concatenated.faa.list"),
-
+ 
             "&&",
-
+ 
         os.environ["clustering_wrapper.py"],
         "--fasta {}".format(os.path.join(directories["tmp"], "components.concatenated.faa")),
         "--output_directory {}".format(output_directory),
@@ -455,22 +460,24 @@ def get_mmseqs2_protein_cmd(input_filepaths, output_filepaths, output_directory,
         "--identifiers {}".format(os.path.join(directories["tmp"], "components.concatenated.faa.list")),
         "--no_sequences_and_header",
         "--representative_output_format fasta",
-
+ 
             "&&",
-
-        "DST={}; SRC={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST/component_clusters.tsv".format(
+ 
+        # FIX: replaced ; with && to prevent unconditional execution
+        "DST={} && SRC={} && SRC=$(realpath --relative-to $DST $SRC) && ln -sf $SRC $DST/component_clusters.tsv".format(
             directories["output"],
             os.path.join(output_directory, "output/clusters.tsv"),
         ),
-
+ 
             "&&",
-
-        "SRC={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST/components.representative_sequences.faa.gz".format(
+ 
+        # FIX: replaced ; with && to prevent unconditional execution
+        "SRC={} && SRC=$(realpath --relative-to $DST $SRC) && ln -sf $SRC $DST/components.representative_sequences.faa.gz".format(
             os.path.join(output_directory, "output/representative_sequences.fasta.gz"),
         ),
-
+ 
             "&&",
-
+ 
         "cat",
         os.path.join(output_directory, "output/clusters.tsv"),
         "|",
@@ -486,25 +493,32 @@ def get_mmseqs2_protein_cmd(input_filepaths, output_filepaths, output_directory,
         os.path.join(directories[("output", "prevalence_tables")], "components.tsv.gz"),
     
             "&&",
-
+ 
         "rm -rf",
         os.path.join(directories["tmp"], "components.*"),
   
     ]
     return cmd
-
+ 
+ 
+# =============================================================================
+# Fixed get_mmseqs2_nucleotide_cmd
+# Changes:
+#   - Added missing comma between "|" and "gzip" (Python implicit concat bug)
+#   - Replaced semicolons with && in symlink commands
+# =============================================================================
 def get_mmseqs2_nucleotide_cmd(input_filepaths, output_filepaths, output_directory, directories, opts):
     cmd = [
         "cat",
         os.path.join(input_filepaths[0],"*","veba_formatted_output", "fasta", "bgcs.fasta.gz"),
-        "|"
+        "|",  # FIX: added missing comma (was "|" "gzip" -> "|gzip")
         "gzip",
         "-d",
         ">",
         os.path.join(directories["tmp"], "bgcs.concatenated.fasta"),
-
+ 
             "&&",
-
+ 
         "cat",
         os.path.join(directories["tmp"], "bgcs.concatenated.fasta"),
         "|",
@@ -515,9 +529,9 @@ def get_mmseqs2_nucleotide_cmd(input_filepaths, output_filepaths, output_directo
         'cut -f1 -d " "', # Should the original gene names be used or the new component id?
         ">",
         os.path.join(directories["tmp"], "bgcs.concatenated.fasta.list"),
-
+ 
             "&&",
-
+ 
         os.environ["clustering_wrapper.py"],
         "--fasta {}".format(os.path.join(directories["tmp"], "bgcs.concatenated.fasta")),
         "--output_directory {}".format(output_directory),
@@ -534,22 +548,24 @@ def get_mmseqs2_nucleotide_cmd(input_filepaths, output_filepaths, output_directo
         "--identifiers {}".format(os.path.join(directories["tmp"], "bgcs.concatenated.fasta.list")),
         "--no_sequences_and_header",
         "--representative_output_format fasta",
-
+ 
             "&&",
-
-        "DST={}; SRC={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST/bgc_clusters.tsv".format(
+ 
+        # FIX: replaced ; with && to prevent unconditional execution
+        "DST={} && SRC={} && SRC=$(realpath --relative-to $DST $SRC) && ln -sf $SRC $DST/bgc_clusters.tsv".format(
             directories["output"],
             os.path.join(output_directory, "output/clusters.tsv"),
         ),
-
+ 
             "&&",
-
-        "SRC={}; SRC=$(realpath --relative-to $DST $SRC); ln -sf $SRC $DST/bgcs.representative_sequences.fasta.gz".format(
+ 
+        # FIX: replaced ; with && to prevent unconditional execution
+        "SRC={} && SRC=$(realpath --relative-to $DST $SRC) && ln -sf $SRC $DST/bgcs.representative_sequences.fasta.gz".format(
             os.path.join(output_directory, "output/representative_sequences.fasta.gz"),
         ),
-
+ 
             "&&",
-
+ 
         "cat",
         os.path.join(output_directory, "output/clusters.tsv"),
         "|",
@@ -563,9 +579,9 @@ def get_mmseqs2_nucleotide_cmd(input_filepaths, output_filepaths, output_directo
         "gzip",
         ">",
         os.path.join(directories[("output", "prevalence_tables")], "bgcs.tsv.gz"),
-
+ 
             "&&",
-
+ 
         "rm -rf",
         os.path.join(directories["tmp"], "bgcs.*"),
   
