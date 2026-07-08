@@ -60,7 +60,7 @@ for ID in $(cat identifiers.list); do
 	done
 ```
 
-**Your output should look something like this:
+**Your output should look like this:
 * 
 *
 *
@@ -72,3 +72,137 @@ veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
 ```
 #### 2. Assemble reads, map reads to assembly, and calculate assembly statistics
 
+Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
+
+```
+N_JOBS=4
+
+# Output directory
+OUT_DIR=veba_output/transcript_assembly
+
+mkdir -p logs
+
+for ID in $(cat identifiers.list); do
+
+	N="assembly__${ID}"
+	rm -f logs/${N}.*
+
+	R1=veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz
+	R2=veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
+
+	CMD="source activate VEBA && veba --module assembly --params \"-1 ${R1} -2 ${R2} -n ${ID} -o ${OUT_DIR} -p ${N_JOBS} -P rnaspades.py\""
+
+	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+**Your output should look like this:
+* 
+*
+*
+
+#### 3. Recover viruses from metatranscriptomic assemblies
+
+We use *geNomad* and *CheckV* to detect and quality-filter viral sequences from the transcript assembly. This is only viral binning and prokaryotic and eukaryotic binning does not apply to transcript data. Unbinned transcripts will be handled in the next step.
+
+```
+N_JOBS=4
+
+for ID in $(cat identifiers.list); do
+
+	N="binning-viral__${ID}"
+	rm -f logs/${N}.*
+
+	FASTA=veba_output/transcript_assembly/${ID}/output/transcripts.fasta
+	BAM=veba_output/transcript_assembly/${ID}/output/mapped.sorted.bam
+
+	CMD="source activate VEBA && veba --module binning-viral --params \"-f ${FASTA} -b ${BAM} -n ${ID} -p ${N_JOBS} -m 1500 -o veba_output/binning/viral -a genomad\""
+
+	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+
+**Your output should look like this:
+* 
+*
+*
+
+#### 4. Identify expressed proteins from unbinned transcripts
+
+Anything not classified as viral is assumed to be prokaryotic and since we cannot assemble full prokaryotic genomes from transcripts we will win Pyrodigal on the unbinned transcripts from the last step to identify protein making regions.
+
+```
+N_JOBS=4
+
+for ID in $(cat identifiers.list); do
+
+	N="pyrodigal__${ID}"
+	rm -f logs/${N}.*
+
+	UNBINNED=veba_output/binning/viral/${ID}/output/unbinned.fasta
+	OUT=veba_output/expressed_proteins/${ID}
+	mkdir -p ${OUT}
+
+	CMD="source activate VEBA-binning-viral_env && pyrodigal \
+		-p meta \
+		-i ${UNBINNED} \
+		-g 11 \
+		-f gff \
+		-d ${OUT}/expressed_genes.ffn \
+		-a ${OUT}/expressed_proteins.faa \
+		--min-gene 90 \
+		--min-edge-gene 60 \
+		--max-overlap 60 \
+		> ${OUT}/gene_models.gff"
+
+	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+
+**Your output should look like this:
+* 
+*
+*
+
+#### 5. Annotate viral and expressed prokaryotic proteins
+
+Now we combine the viral proteins from step 3 with the expressed prokaryotic proteins from step 4 and annotate them together using VEBA's annotation module. This searches each protein against multiple reference databases to assign function labels.
+
+1. Concatenate viral and expressed proteins for each sample
+```
+for ID in $(cat identifiers.list); do
+
+	OUT=veba_output/annotations/${ID}
+	mkdir -p ${OUT}
+
+	cat veba_output/binning/viral/${ID}/output/genomes/*.faa \
+	    veba_output/expressed_proteins/${ID}/expressed_proteins.faa \
+	    > ${OUT}/all_proteins.faa
+
+	done
+```
+
+2. Run VEBA's annotation module on the combined protein file
+```
+N_JOBS=4
+
+for ID in $(cat identifiers.list); do
+
+	N="annotate__${ID}"
+	rm -f logs/${N}.*
+
+	PROTEINS=veba_output/annotations/${ID}/all_proteins.faa
+
+	CMD="source activate VEBA && veba --module annotate --params \"-f ${PROTEINS} -o veba_output/annotations/${ID} -p ${N_JOBS}\""
+
+	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+
+**Your output should look like this:
+* 
+*
+*
