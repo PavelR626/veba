@@ -32,6 +32,43 @@ mkdir -p logs/
 mkdir -p Fastq/
 cat identifiers.list
 ```
-2. Download raw fastq files from TBA
-3. Trim, remove contamination, count ribosomal reads
+2. Make sure your VEBA database path is set which is required for human contamination removal and rRNA filtering
 ```
+echo $VEBA_DATABASE
+# If nothing prints, set it manually:
+# export VEBA_DATABASE=/path/to/veba/database
+```
+3. Trim reads, remove human contamination, and filter ribosomal reads
+```
+N_JOBS=4
+
+HUMAN_INDEX=${VEBA_DATABASE}/Contamination/chm13v2.0/chm13v2.0
+
+RIBOSOMAL_KMERS=${VEBA_DATABASE}/Contamination/kmers/ribokmers.fa.gz
+
+for ID in $(cat identifiers.list); do
+
+	R1=Fastq/${ID}_1.fastq.gz
+	R2=Fastq/${ID}_2.fastq.gz
+	N=preprocessing__${ID}
+	rm -f logs/${N}.*
+
+	CMD="source activate VEBA && veba --module preprocess --params \"-n ${ID} -1 ${R1} -2 ${R2} -p ${N_JOBS} -x ${HUMAN_INDEX} -k ${RIBOSOMAL_KMERS} --retain_contaminated_reads 0 --retain_kmer_hits 0 --retain_non_kmer_hits 0 -o veba_output/preprocess\""
+
+	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+
+**Your output should look something like this:
+* 
+*
+*
+
+Your proccessed reads will go to:
+```
+veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz
+veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
+```
+#### 2. Assemble reads, map reads to assembly, and calculate assembly statistics
+
