@@ -7,7 +7,7 @@ This pipeline works around that by recovering viral virus genomes normally throu
 
 ## Pipeline Overview
 
-![Pipeline Paulo provided](images/VEBAMetatranscriptomicsPipeline.png)
+![Pipeline Paulo provided](../../images/VEBAMetatranscriptomicsPipeline.png)
 
 _____________________________________________________
 
