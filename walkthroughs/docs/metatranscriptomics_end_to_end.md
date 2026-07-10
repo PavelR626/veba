@@ -104,7 +104,7 @@ for ID in $(cat identifiers.list); do
 
 #### 3. Recover viruses from metatranscriptomic assemblies
 
-We use *geNomad* and *CheckV* to detect and quality-filter viral sequences from the transcript assembly. This is only viral binning and prokaryotic and eukaryotic binning does not apply to transcript data. Unbinned transcripts will be handled in the next step.
+We use *geNomad* and to detect and quality-filter viral sequences from the transcript assembly. This is only viral binning and prokaryotic and eukaryotic binning does not apply to transcript data. Unbinned transcripts will be handled in the next step.
 
 ```
 N_JOBS=4
@@ -131,7 +131,7 @@ for ID in $(cat identifiers.list); do
 
 #### 4. Identify expressed proteins from unbinned transcripts
 
-Anything not classified as viral is assumed to be prokaryotic and since we cannot assemble full prokaryotic genomes from transcripts we will win Pyrodigal on the unbinned transcripts from the last step to identify protein making regions.
+Anything not classified as viral is assumed to be prokaryotic and since we cannot assemble full prokaryotic genomes from transcripts. We will use Pyrodigal on the unbinned transcripts from the last step to identify protein producing regions.
 
 ```
 N_JOBS=4
