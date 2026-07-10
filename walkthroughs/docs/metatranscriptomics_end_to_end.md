@@ -168,7 +168,7 @@ for ID in $(cat identifiers.list); do
         --cpus-per-task=${N_JOBS} \
         --mem=16G \
         --time=02:00:00 \
-        --account=YOUR_ALLOCATION \
+        --account=My_Allocation \
         --wrap="${CMD}"
 
 	done
