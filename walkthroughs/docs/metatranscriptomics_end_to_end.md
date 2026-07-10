@@ -158,6 +158,18 @@ for ID in $(cat identifiers.list); do
 		> ${OUT}/gene_models.gff"
 
 	# Either run this command or use SunGridEngine/SLURM
+	#sbatch \
+        --job-name=${N} \
+        --output=logs/${N}.o%j \
+        --error=logs/${N}.e%j \
+        --partition=shared \
+        --nodes=1 \
+        --ntasks-per-node=1 \
+        --cpus-per-task=${N_JOBS} \
+        --mem=16G \
+        --time=02:00:00 \
+        --account=YOUR_ALLOCATION \
+        --wrap="${CMD}"
 
 	done
 ```
