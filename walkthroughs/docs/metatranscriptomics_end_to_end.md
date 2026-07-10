@@ -134,7 +134,7 @@ for ID in $(cat identifiers.list); do
 Anything not classified as viral is assumed to be prokaryotic and since we cannot assemble full prokaryotic genomes from transcripts. We will use Pyrodigal on the unbinned transcripts from the last step to identify protein producing regions.
 
 ```
-N_JOBS=4
+N_JOBS=1
 
 for ID in $(cat identifiers.list); do
 
@@ -158,6 +158,13 @@ for ID in $(cat identifiers.list); do
 		> ${OUT}/gene_models.gff"
 
 	# Either run this command or use SunGridEngine/SLURM
+
+	done
+```
+
+An example of running this using SLURM:
+
+```
 	#sbatch \
         --job-name=${N} \
         --output=logs/${N}.o%j \
@@ -170,8 +177,6 @@ for ID in $(cat identifiers.list); do
         --time=02:00:00 \
         --account=My_Allocation \
         --wrap="${CMD}"
-
-	done
 ```
 
 **Your output should look like this:
