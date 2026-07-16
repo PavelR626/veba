@@ -2,14 +2,14 @@
 
 In metatranscriptomics, only viral genomes can be reliably recovered from transcript assemblies — prokaryotic and eukaryotic genome binning is not applicable because transcript data does not contain the full genomic structure needed to reconstruct complete genomes.
 
-This workflow works around that by recovering viral genomes normally through VEBA's viral binning module and processing the unbinned transcripts in metagenomic mode using Pyrodigal to predicts putative protein-coding regions. All the proteins recovered this way represent the active gene expression at the time of sampling.
+This walkthrough works around that by recovering viral genomes normally through VEBA's viral binning module and processing the unbinned transcripts in metagenomic mode using Pyrodigal to predict potential protein-coding regions. Then it annotates those proteins together with proteins from the recovered viral genomes.
 
 
 ## Pipeline Overview
 
 ![Pipeline Paulo provided](../../images/VEBAMetatranscriptomicsPipeline.png)
 
-*Diagram made by Paulo Tanicala
+*Diagram made by Paulo Tanicala*
 _____________________________________________________
 
 #### Steps:
@@ -24,7 +24,11 @@ _____________________________________________________
 
 This is a quick rundown of how to preprocess already downloaded Human lower respiratory tract samples although you can find a more detailed walkthrough of how to work with other reads here: [downloading and preprocessing reads workflow](download_and_preprocess_reads.md)
 
-1.set up list of identifiers and create directories
+Before starting, make sure you have:
+* An `identifiers.list` file containing one sample identifier per line
+* Paired reads named `Fastq/${ID}_1.fastq.gz` and `Fastq/${ID}_2.fastq.gz`
+
+1.Set up list of identifiers and create directories
 ```
 conda activate VEBA-preprocess_env
 mkdir -p logs/
@@ -64,7 +68,7 @@ for ID in $(cat identifiers.list); do
 *
 *
 
-Your proccessed reads will go to:
+Your processed reads will go to:
 ```
 veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz
 veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
@@ -180,7 +184,6 @@ An example of running Pyrodigal using SLURM:
         --cpus-per-task=${N_JOBS} \
         --mem=12G \
         --time=04:00:00 \
-        --account=My_Allocation \
         --wrap="${CMD}"
 ```
 
