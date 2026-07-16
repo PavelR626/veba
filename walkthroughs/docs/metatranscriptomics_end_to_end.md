@@ -132,28 +132,33 @@ for ID in $(cat identifiers.list); do
 Anything not classified as viral is used here to identify putative prokaryotic protein-coding regions. We will use Pyrodigal on the unbinned transcripts from the last step to identify these protein producing regions.
 
 ```
-N_JOBS=1
+CODE=""
+
+N_JOBS=4
+
+mkdir -p logs
 
 for ID in $(cat identifiers.list); do
 
-	N="pyrodigal__${ID}"
+	N="pyrodigal_${ID}"
 	rm -f logs/${N}.*
 
 	UNBINNED=veba_output/binning/viral/${ID}/output/unbinned.fasta
 	OUT=veba_output/expressed_proteins/${ID}
 	mkdir -p ${OUT}
 
-	CMD="source activate VEBA-binning-viral_env && pyrodigal \
+	CMD="source activate VEBA-binning-prokaryotic_env && pyrodigal \
 		-p meta \
+		-j ${N_JOBS} \
 		-i ${UNBINNED} \
 		-g 11 \
 		-f gff \
 		-d ${OUT}/expressed_genes.ffn \
 		-a ${OUT}/expressed_proteins.faa \
+		-o ${OUT}/gene_models.gff"
 		--min-gene 90 \
 		--min-edge-gene 60 \
-		--max-overlap 60 \
-		> ${OUT}/gene_models.gff"
+		--max-overlap 60"
 
 	# Either run this command or use SunGridEngine/SLURM
 
@@ -163,16 +168,18 @@ for ID in $(cat identifiers.list); do
 An example of running this using SLURM:
 
 ```
-	#sbatch \
+	sbatch \
+		--mail-type=ALL \
+		--mail-user=YOUR_EMAIL \
         --job-name=${N} \
-        --output=logs/${N}.o%j \
-        --error=logs/${N}.e%j \
-        --partition=shared \
+        --output=logs/${N}.out \
+        --error=logs/${N}.err \
+        --partition=ind-shared \
         --nodes=1 \
         --ntasks-per-node=1 \
         --cpus-per-task=${N_JOBS} \
-        --mem=16G \
-        --time=02:00:00 \
+        --mem=12G \
+        --time=04:00:00 \
         --account=My_Allocation \
         --wrap="${CMD}"
 ```
