@@ -22,7 +22,7 @@ _____________________________________________________
 
 #### 1. Preprocess reads and get directory set up
 
-This is a quick rundown of how to preproccess already downloaded Human lower respiratory tract samples although you can find a more detailed walkthrough of how to work with other reads here: [downloading and preprocessing reads workflow](download_and_preprocess_reads.md)
+This is a quick rundown of how to preprocess already downloaded Human lower respiratory tract samples although you can find a more detailed walkthrough of how to work with other reads here: [downloading and preprocessing reads workflow](download_and_preprocess_reads.md)
 
 1.set up list of identifiers and create directories
 ```
@@ -49,7 +49,7 @@ for ID in $(cat identifiers.list); do
 
 	R1=Fastq/${ID}_1.fastq.gz
 	R2=Fastq/${ID}_2.fastq.gz
-	N=preprocessing__${ID}
+	N=preprocess__${ID}
 	rm -f logs/${N}.*
 
 	CMD="source activate VEBA && veba --module preprocess --params \"-n ${ID} -1 ${R1} -2 ${R2} -p ${N_JOBS} -x ${HUMAN_INDEX} -k ${RIBOSOMAL_KMERS} --retain_contaminated_reads 0 --retain_kmer_hits 0 --retain_non_kmer_hits 0 -o veba_output/preprocess\""
@@ -140,17 +140,17 @@ mkdir -p logs
 
 for ID in $(cat identifiers.list); do
 
-	N="pyrodigal_${ID}"
+	N="pyrodigal__${ID}"
 	rm -f logs/${N}.*
 
-	UNBINNED=veba_output/binning/viral/${ID}/output/unbinned.fasta
+	FASTA=veba_output/binning/viral/${ID}/output/unbinned.fasta
 	OUT_DIR=veba_output/expressed_proteins/${ID}
 	mkdir -p ${OUT_DIR}
 
 	CMD="source activate VEBA-binning-prokaryotic_env && pyrodigal \
 		-p meta \
 		-j ${N_JOBS} \
-		-i ${UNBINNED} \
+		-i ${FASTA} \
 		-g 11 \
 		-f gff \
 		-d ${OUT_DIR}/expressed_genes.ffn \
@@ -197,7 +197,7 @@ Now we combine the viral proteins from step 3 with the expressed prokaryotic pro
 ```
 for ID in $(cat identifiers.list); do
 
-	OUT_DIR=veba_output/annotations/${ID}
+	OUT_DIR=veba_output/annotation/${ID}
 	mkdir -p ${OUT_DIR}
 
 	cat veba_output/binning/viral/${ID}/output/genomes/*.faa \
@@ -216,9 +216,9 @@ for ID in $(cat identifiers.list); do
 	N="annotate__${ID}"
 	rm -f logs/${N}.*
 
-	PROTEINS=veba_output/annotations/${ID}/all_proteins.faa
+	PROTEINS=veba_output/annotation/${ID}/all_proteins.faa
 
-	CMD="source activate VEBA && veba --module annotate --params \"-a ${PROTEINS} -o veba_output/annotations/${ID} -p ${N_JOBS}\""
+	CMD="source activate VEBA && veba --module annotate --params \"-a ${PROTEINS} -o veba_output/annotation/${ID} -p ${N_JOBS}\""
 
 	# Either run this command or use SunGridEngine/SLURM
 
