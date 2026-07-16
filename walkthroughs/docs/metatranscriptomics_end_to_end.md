@@ -144,8 +144,8 @@ for ID in $(cat identifiers.list); do
 	rm -f logs/${N}.*
 
 	UNBINNED=veba_output/binning/viral/${ID}/output/unbinned.fasta
-	OUT=veba_output/expressed_proteins/${ID}
-	mkdir -p ${OUT}
+	OUT_DIR=veba_output/expressed_proteins/${ID}
+	mkdir -p ${OUT_DIR}
 
 	CMD="source activate VEBA-binning-prokaryotic_env && pyrodigal \
 		-p meta \
@@ -153,19 +153,19 @@ for ID in $(cat identifiers.list); do
 		-i ${UNBINNED} \
 		-g 11 \
 		-f gff \
-		-d ${OUT}/expressed_genes.ffn \
-		-a ${OUT}/expressed_proteins.faa \
-		-o ${OUT}/gene_models.gff"
+		-d ${OUT_DIR}/expressed_genes.ffn \
+		-a ${OUT_DIR}/expressed_proteins.faa \
+		-o ${OUT_DIR}/gene_models.gff \
 		--min-gene 90 \
 		--min-edge-gene 60 \
 		--max-overlap 60"
 
 	# Either run this command or use SunGridEngine/SLURM
-
+	
 	done
 ```
 
-An example of running this using SLURM:
+An example of running Pyrodigal using SLURM:
 
 ```
 	sbatch \
@@ -197,12 +197,12 @@ Now we combine the viral proteins from step 3 with the expressed prokaryotic pro
 ```
 for ID in $(cat identifiers.list); do
 
-	OUT=veba_output/annotations/${ID}
-	mkdir -p ${OUT}
+	OUT_DIR=veba_output/annotations/${ID}
+	mkdir -p ${OUT_DIR}
 
 	cat veba_output/binning/viral/${ID}/output/genomes/*.faa \
 	    veba_output/expressed_proteins/${ID}/expressed_proteins.faa \
-	    > ${OUT}/all_proteins.faa
+	    > ${OUT_DIR}/all_proteins.faa
 
 	done
 ```
@@ -218,7 +218,7 @@ for ID in $(cat identifiers.list); do
 
 	PROTEINS=veba_output/annotations/${ID}/all_proteins.faa
 
-	CMD="source activate VEBA && veba --module annotate --params \"-f ${PROTEINS} -o veba_output/annotations/${ID} -p ${N_JOBS}\""
+	CMD="source activate VEBA && veba --module annotate --params \"-a ${PROTEINS} -o veba_output/annotations/${ID} -p ${N_JOBS}\""
 
 	# Either run this command or use SunGridEngine/SLURM
 
