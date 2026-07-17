@@ -18,7 +18,7 @@ _____________________________________________________
 2. Assemble reads, map reads to assembly, and calculate assembly statistics
 3. Recover viruses from metatranscriptomics assemblies
 4. Identify expressed proteins from unbinned transcripts
-5. Annotate viral and expressed prokaryotic proteins
+5. Annotate viral and Proteins predicted from unbinned transcripts
 
 #### 1. Preprocess reads and get directory set up
 
@@ -58,7 +58,7 @@ for ID in $(cat identifiers.list); do
 	R2=Fastq/${ID}_2.fastq.gz
 
 	# Set a useful name for the job and its log files
-	N=preprocess__${ID}
+	N=preprocessing__${ID}
 	rm -f logs/${N}.*
 
 	# Trim reads, remove human contamination, and filter ribosomal reads
@@ -69,16 +69,11 @@ for ID in $(cat identifiers.list); do
 	done
 ```
 
-**Your output should look like this:
-* 
-*
-*
+**The following output files will be produced for each sample:**
+* veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz - Cleaned and trimmed forward reads
+* veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz - Cleaned and trimmed reverse reads
+* seqkit_stats.concatenated.tsv - Read statistics from the intermediate preprocessing steps
 
-Your processed reads will go to:
-```
-veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz
-veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
-```
 #### 2. Assemble reads, map reads to assembly, and calculate assembly statistics
 
 Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
@@ -106,7 +101,7 @@ for ID in $(cat identifiers.list); do
 
 	done
 ```
-**Your output should look like this:
+**The following output files will be produced for each sample:**
 * 
 *
 *
@@ -135,7 +130,7 @@ for ID in $(cat identifiers.list); do
 	done
 ```
 
-**Your output should look like this:
+**The following output files will be produced for each sample:**
 * 
 *
 *
@@ -201,14 +196,14 @@ An example of running Pyrodigal using SLURM:
         --wrap="${CMD}"
 ```
 
-**Your output should look like this:
+**The following output files will be produced for each sample:**
 * 
 *
 *
 
-#### 5. Annotate viral and expressed prokaryotic proteins
+#### 5. Annotate viral and Proteins predicted from unbinned transcripts
 
-Now we combine the viral proteins from step 3 with the expressed prokaryotic proteins from step 4 and annotate them together using VEBA's annotation module. This searches each protein against multiple reference databases to assign function labels.
+Now we combine the viral proteins from step 3 with the Proteins predicted from unbinned transcripts from step 4 and annotate them together using VEBA's annotation module. This searches each protein against multiple reference databases to assign function labels.
 
 1. Concatenate viral and expressed proteins for each sample
 ```
@@ -246,7 +241,7 @@ for ID in $(cat identifiers.list); do
 	done
 ```
 
-**Your output should look like this:
+**The following output files will be produced for each sample:**
 * 
 *
 *
