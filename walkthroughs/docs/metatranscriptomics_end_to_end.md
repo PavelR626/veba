@@ -43,19 +43,25 @@ echo $VEBA_DATABASE
 ```
 3. Trim reads, remove human contamination, and filter ribosomal reads
 ```
+# Set the number of threads to use for each sample
 N_JOBS=4
 
+# Set the reference paths used for human-read removal and rRNA filtering
 HUMAN_INDEX=${VEBA_DATABASE}/Contamination/chm13v2.0/chm13v2.0
-
 RIBOSOMAL_KMERS=${VEBA_DATABASE}/Contamination/kmers/ribokmers.fa.gz
 
+# Iterate through the sample identifiers
 for ID in $(cat identifiers.list); do
 
+	# Get the forward and reverse raw reads
 	R1=Fastq/${ID}_1.fastq.gz
 	R2=Fastq/${ID}_2.fastq.gz
+
+	# Set a useful name for the job and its log files
 	N=preprocess__${ID}
 	rm -f logs/${N}.*
 
+	# Trim reads, remove human contamination, and filter ribosomal reads
 	CMD="source activate VEBA && veba --module preprocess --params \"-n ${ID} -1 ${R1} -2 ${R2} -p ${N_JOBS} -x ${HUMAN_INDEX} -k ${RIBOSOMAL_KMERS} --retain_contaminated_reads 0 --retain_kmer_hits 0 --retain_non_kmer_hits 0 -o veba_output/preprocess\""
 
 	# Either run this command or use SunGridEngine/SLURM
@@ -78,6 +84,7 @@ veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
 Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
 
 ```
+# Set the number of threads to use for each sample
 N_JOBS=4
 
 # Output directory
