@@ -74,6 +74,8 @@ for ID in $(cat identifiers.list); do
 * veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz - Cleaned and trimmed reverse reads
 * seqkit_stats.concatenated.tsv - Read statistics from the intermediate preprocessing steps
 
+The main files used in the next step are `cleaned_1.fastq.gz` and `cleaned_2.fastq.gz`. These contain the paired reads remaining after trimming, human-contamination removal, and ribosomal-read filtering.
+
 #### 2. Assemble reads, map reads to assembly, and calculate assembly statistics
 
 Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
@@ -102,9 +104,16 @@ for ID in $(cat identifiers.list); do
 	done
 ```
 **The following output files will be produced for each sample:**
-* 
-*
-*
+* featurecounts.tsv.gz - featureCounts output for transcript-level counts
+* mapped.sorted.bam - Sorted read-alignment file
+* mapped.sorted.bam.bai - Index for the sorted BAM file
+* genes_to_transcripts.tsv - Gene identifier to transcript identifier mapping
+* transcripts.fasta - Assembled transcript sequences
+* transcripts.fasta.*.bt2 - Bowtie2 index files
+* transcripts.fasta.saf - SAF-formatted transcript features
+* seqkit_stats.tsv.gz - Transcript assembly statistics
+
+The main files used in the next step are `transcripts.fasta` and `mapped.sorted.bam`. The FASTA file contains the assembled transcript sequences, while the BAM file contains the reads mapped back to those transcripts for coverage information.
 
 #### 3. Recover viruses from metatranscriptomic assemblies
 
@@ -131,9 +140,23 @@ for ID in $(cat identifiers.list); do
 ```
 
 **The following output files will be produced for each sample:**
-* 
-*
-*
+* binned.list - List of transcript sequences assigned to viral bins
+* bins.list - List of recovered viral genome identifiers
+* checkv_results.filtered.tsv - Filtered CheckV quality results
+* featurecounts.orfs.tsv.gz - ORF-level counts
+* genome_statistics.tsv - Assembly statistics for the recovered viral genomes
+* gene_statistics.cds.tsv - Statistics for predicted coding sequences
+* genomes/ - Directory containing the recovered viral genomes and their predicted genes
+* genomes/[id_genome].fa - Viral genome nucleotide sequence
+* genomes/[id_genome].faa - Predicted viral protein sequences
+* genomes/[id_genome].ffn - Predicted viral coding sequences
+* genomes/[id_genome].gff - Viral gene models
+* genomes/identifier_mapping.tsv - Mapping between ORF, transcript, and viral genome identifiers
+* scaffolds_to_bins.tsv - Mapping between transcript sequences and viral bins
+* unbinned.fasta - Sequences not included in the recovered viral bins
+* unbinned.list - List of the unbinned sequence identifiers
+
+The main files used in the next steps are `unbinned.fasta` and the viral protein files in `genomes/*.faa`.
 
 #### 4. Identify expressed proteins from unbinned transcripts
 
@@ -197,9 +220,9 @@ An example of running Pyrodigal using SLURM:
 ```
 
 **The following output files will be produced for each sample:**
-* 
-*
-*
+* expressed_genes.ffn - 
+*expressed_proteins.faa - 
+*gene_models.gff - 
 
 #### 5. Annotate viral and Proteins predicted from unbinned transcripts
 
