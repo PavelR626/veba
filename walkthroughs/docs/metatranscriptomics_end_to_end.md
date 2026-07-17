@@ -84,22 +84,22 @@ veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
 Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
 
 ```
-# Set the number of threads to use for each sample
 N_JOBS=4
 
-# Output directory
+# Use the customized metatranscriptomics assembly directory
 OUT_DIR=veba_output/transcript_assembly
 
-mkdir -p logs
-
+# Iterate through the sample identifiers
 for ID in $(cat identifiers.list); do
 
 	N="assembly__${ID}"
 	rm -f logs/${N}.*
 
+	# Get the cleaned forward and reverse reads from preprocessing
 	R1=veba_output/preprocess/${ID}/output/cleaned_1.fastq.gz
 	R2=veba_output/preprocess/${ID}/output/cleaned_2.fastq.gz
 
+	# Assemble transcripts with rnaSPAdes, map reads, and calculate statistics
 	CMD="source activate VEBA && veba --module assembly --params \"-1 ${R1} -2 ${R2} -n ${ID} -o ${OUT_DIR} -p ${N_JOBS} -P rnaspades.py\""
 
 	# Either run this command or use SunGridEngine/SLURM
@@ -123,9 +123,11 @@ for ID in $(cat identifiers.list); do
 	N="binning-viral__${ID}"
 	rm -f logs/${N}.*
 
+	# Get the transcript assembly and its corresponding read alignments
 	FASTA=veba_output/transcript_assembly/${ID}/output/transcripts.fasta
 	BAM=veba_output/transcript_assembly/${ID}/output/mapped.sorted.bam
 
+	# Detect viruses with geNomad and evaluate the recovered sequences with CheckV
 	CMD="source activate VEBA && veba --module binning-viral --params \"-f ${FASTA} -b ${BAM} -n ${ID} -p ${N_JOBS} -m 1500 -o veba_output/binning/viral -a genomad\""
 
 	# Either run this command or use SunGridEngine/SLURM
@@ -143,21 +145,22 @@ for ID in $(cat identifiers.list); do
 Anything not classified as viral is used here to identify putative prokaryotic protein-coding regions. We will use Pyrodigal on the unbinned transcripts from the last step to identify these protein producing regions.
 
 ```
-CODE=""
-
 N_JOBS=4
-
-mkdir -p logs
 
 for ID in $(cat identifiers.list); do
 
 	N="pyrodigal__${ID}"
 	rm -f logs/${N}.*
 
+	# Use transcripts that were not included in the recovered viral bins
 	FASTA=veba_output/binning/viral/${ID}/output/unbinned.fasta
+
+	# Create a separate Pyrodigal output directory for each sample
 	OUT_DIR=veba_output/expressed_proteins/${ID}
 	mkdir -p ${OUT_DIR}
 
+	# Predict protein-coding regions in metagenomic mode using genetic code 11
+    # Write nucleotide sequences, protein sequences, and GFF gene models
 	CMD="source activate VEBA-binning-prokaryotic_env && pyrodigal \
 		-p meta \
 		-j ${N_JOBS} \
@@ -179,7 +182,11 @@ for ID in $(cat identifiers.list); do
 An example of running Pyrodigal using SLURM:
 
 ```
+	# Submit the Pyrodigal command to the shared partition
+	# Request one node, one task, four CPUs, 12 GB of memory, and four hours
+	# Standard output and error messages are written to the logs directory
 	sbatch \
+		--account=Your_Allocation \
 		--mail-type=ALL \
 		--mail-user=YOUR_EMAIL \
         --job-name=${N} \
@@ -207,9 +214,11 @@ Now we combine the viral proteins from step 3 with the expressed prokaryotic pro
 ```
 for ID in $(cat identifiers.list); do
 
+	# Create a separate annotation directory for each sample
 	OUT_DIR=veba_output/annotation/${ID}
 	mkdir -p ${OUT_DIR}
 
+	# Combine proteins from recovered viral genomes with proteins predicted from the unbinned transcripts
 	cat veba_output/binning/viral/${ID}/output/genomes/*.faa \
 	    veba_output/expressed_proteins/${ID}/expressed_proteins.faa \
 	    > ${OUT_DIR}/all_proteins.faa
@@ -226,8 +235,10 @@ for ID in $(cat identifiers.list); do
 	N="annotate__${ID}"
 	rm -f logs/${N}.*
 
+	# Use the combined viral and unbinned-transcript protein file
 	PROTEINS=veba_output/annotation/${ID}/all_proteins.faa
 
+	# Search the proteins against VEBA's functional annotation databases
 	CMD="source activate VEBA && veba --module annotate --params \"-a ${PROTEINS} -o veba_output/annotation/${ID} -p ${N_JOBS}\""
 
 	# Either run this command or use SunGridEngine/SLURM
