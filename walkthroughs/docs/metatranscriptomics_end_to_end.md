@@ -18,7 +18,7 @@ _____________________________________________________
 2. Assemble reads, map reads to assembly, and calculate assembly statistics
 3. Recover viruses from metatranscriptomics assemblies
 4. Identify expressed proteins from unbinned transcripts
-5. Annotate viral and Proteins predicted from unbinned transcripts
+5. Annotate viral proteins and proteins predicted from unbinned transcripts
 
 #### 1. Preprocess reads and get directory set up
 
@@ -224,7 +224,7 @@ An example of running Pyrodigal using SLURM:
 *expressed_proteins.faa - 
 *gene_models.gff - 
 
-#### 5. Annotate viral and Proteins predicted from unbinned transcripts
+#### 5. Annotate viral proteins and proteins predicted from unbinned transcripts
 
 Now we combine the viral proteins from step 3 with the Proteins predicted from unbinned transcripts from step 4 and annotate them together using VEBA's annotation module. This searches each protein against multiple reference databases to assign function labels.
 
