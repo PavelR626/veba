@@ -220,9 +220,11 @@ An example of running Pyrodigal using SLURM:
 ```
 
 **The following output files will be produced for each sample:**
-* expressed_genes.ffn - 
-*expressed_proteins.faa - 
-*gene_models.gff - 
+* expressed_genes.ffn - Nucleotide sequences of protein-coding regions
+*expressed_proteins.faa - Amino acid sequences translated from the predicted coding regions
+*gene_models.gff - Locations and features of predicted gene models
+
+The main file used in the next step is `expressed_proteins.faa`, which contains the proteins predicted from the unbinned transcripts.
 
 #### 5. Annotate viral proteins and proteins predicted from unbinned transcripts
 
@@ -265,6 +267,6 @@ for ID in $(cat identifiers.list); do
 ```
 
 **The following output files will be produced for each sample:**
-* 
-*
-*
+* all_proteins.faa - Combined protein sequences
+*output/annotations.proteins.tsv.gz - Combined functional annotations for all proteins
+*TBA
