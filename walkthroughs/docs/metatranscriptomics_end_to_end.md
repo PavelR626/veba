@@ -129,7 +129,7 @@ for ID in $(cat identifiers.list); do
 
 	# Get the transcript assembly and its corresponding read alignments
 	FASTA=veba_output/transcript_assembly/${ID}/output/transcripts.fasta
-	BAM=veba_output/transcript_assembly/${ID}/output/mapped.sorted.bam
+	BAM=veba_output/transcript_assembly/${ID}/intermediate/2__alignment/mapped.sorted.bam
 
 	# Detect viruses with geNomad and evaluate the recovered sequences with CheckV
 	CMD="source activate VEBA && veba --module binning-viral --params \"-f ${FASTA} -b ${BAM} -n ${ID} -p ${N_JOBS} -m 1500 -o veba_output/binning/viral -a genomad\""
