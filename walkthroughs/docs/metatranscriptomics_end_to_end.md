@@ -81,6 +81,7 @@ The main files used in the next step are `cleaned_1.fastq.gz` and `cleaned_2.fas
 Here we assemble the cleaned reads into transcripts using `rnaSPAdes`
 
 Currently there is a known issue where one intermediate file is named transcripts.paths instead of scaffolds.paths
+
 Fix: "cp -iv veba_output/transcript_assembly/${ID}/intermediate/1__assembly/transcripts.paths veba_output/transcript_assembly/${ID}/intermediate/1__assembly/scaffolds.paths 
 
 ```
